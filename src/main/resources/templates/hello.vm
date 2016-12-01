@@ -1,1 +1,8 @@
-fdsafds
+
+
+
+#foreach($s in $data)
+
+    <h1 style="color: crimson">访问数据：$s</h1>
+
+#end
