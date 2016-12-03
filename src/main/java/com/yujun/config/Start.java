@@ -23,19 +23,20 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableAutoConfiguration 
 @Controller
 public class Start {
-	@RequestMapping("/")
-	@ResponseBody
-    String home() {
-        return "Hello World!";
-    }
+
+	@RequestMapping("/stockDetail")  
+	public String stockDetail(Map<String, Object> model){  
+	    List<String> list= new ArrayList(); 
+	    list.add("我要我们在一起都是！额！");
+	    model.put("data",list);  
+	    return "stockDetail";  
+	} 
 	
-	
-	@RequestMapping("/hello")  
+	@RequestMapping("/")  
 	public String hello(Map<String, Object> model){  
 	    List<String> list= new ArrayList(); 
-	    list.add("我要我们在一起");
+	    list.add("我要我们在一起都是！额！");
 	    model.put("data",list);  
-	  
 	    return "hello";  
 	}  
 	
