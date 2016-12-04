@@ -1,0 +1,34 @@
+ #parse("head.vm")
+ 
+ 
+ <style type="text/css">
+	    [class*="col-"] {
+	    	#if($!stock.floatRate >0) 
+			  background-color: red;
+			#else
+			  background-color: green;
+			#end
+			  text-align:left;
+		}
+	 </style>
+ <div class="container">
+     <div class="starter-template">
+	   	 <div class="row">
+	   	 	<div class="col-md-4 col-xs-12">$!stock.zqName/$!stock.zqCode</div>
+	        <div class="col-md-4 col-xs-6"">当前价：$!stock.nowPrice</div>
+	        <div class="col-md-4 col-xs-6"">成本价：$!stock.avaPrice</div>
+	        <div class="col-md-4 col-xs-12"">持有股数：$!stock.amount股</div>
+	        <div class="col-md-4 col-xs-12"">最新市值：$!stock.nowValue元</div>
+	        <div class="col-md-4 col-xs-12"">可卖数量：$!stock.salesAmount股</div>
+	        <div class="col-md-4 col-xs-12"">浮动盈亏：$!stock.floatValue元</div>
+	        <div class="col-md-4 col-xs-6"">盈亏比例：$!stock.floatRate%</div>
+	        <div class="col-md-4 col-xs-6"">自动下单：是</div>
+	      </div>
+	      
+	      <div class="row">
+	        	<button type="button" class="btn btn-lg btn-success">监控启动</button>
+	        	<button type="button" class="btn btn-lg btn-success">监控停止</button>
+	      </div>
+      </div>
+</div>
+ #parse("foot.vm")

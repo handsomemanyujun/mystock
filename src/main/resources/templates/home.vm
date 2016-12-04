@@ -1,0 +1,38 @@
+#parse("head.vm")
+ <div class="container">
+  	<div class="starter-template">
+	   	 <div class="row">
+	   		<div class="col-md-6 col-xs-12">股东账号：$!accountId</div>
+	   	 	<div class="col-md-6 col-xs-12">总资产：$!fund.totalValue元</div>
+	        <div class="col-md-6 col-xs-12">股票市值：$!fund.stockValue元</div>
+	        <div class="col-md-6 col-xs-12">可用资金：$!fund.availableFunds元</div>
+	        <div class="col-md-6 col-xs-12">可取资金：$!fund.featchFunds元</div>
+	        <div class="col-md-6 col-xs-12">冻结资金：$!fund.freezeFunds元</div>
+	      </div>
+	    
+      </div>
+      
+<table class="table">
+        <thead>
+          <tr>
+            <th>股票</th>
+            <th>数量</th>
+            <th>价格</th>
+            <th>盈亏</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+         #foreach($stock in $!stocks)
+	          <tr>
+	            <td>$!stock.zqName $!stock.zqCode</td>
+	            <td>$!stock.amount $!stock.salesAmount</td>
+	            <td>$!stock.nowPrice $!stock.avaPrice</td>
+	            <td>$!stock.floatValue $!stock.floatRate</td>
+	            <td><a href="/stock_detail.htm?zqCode=$!stock.zqCode">详情</a></td>
+	          </tr>
+          #end
+        </tbody>
+      </table>
+</div>
+#parse("foot.vm")
