@@ -1,7 +1,7 @@
 package com.yujun.domain;
 
-import com.yujun.TdxClient;
 import com.yujun.calculate.TradeOrder;
+import com.yujun.core.TdxClient;
 
 public class Task {
 	StockDO stockDO;

@@ -2,27 +2,36 @@ package com.yujun.domain;
 
 import com.yujun.util.Money;
 
-
 /**
- * ×Ê½ğ³Ø
+ * èµ„é‡‘æ± 
  * @author yujun
  *
  */
 public class FundPoolDO {
 	/**
-	 * ×ÜÊĞÖµ
+	 * æ€»èµ„äº§
 	 */
 	private Money totalValue;
 	
 	/**
-	 * ¹ÉÆ±ÊĞÖµ
+	 * è‚¡ç¥¨å¸‚å€¼
 	 */
 	private Money stockValue;
 	
 	/**
-	 * ¿ÉÓÃÓà¶î
+	 * å†»ç»“èµ„é‡‘
+	 */
+	private Money freezeFunds;
+	
+	/**
+	 * å¯ç”¨èµ„é‡‘
 	 */
 	private Money availableFunds;
+	
+	/**
+	 * å¯å–èµ„é‡‘
+	 */
+	private Money featchFunds;
 
 	public Money getTotalValue() {
 		return totalValue;
@@ -48,8 +57,24 @@ public class FundPoolDO {
 		this.availableFunds = availableFunds;
 	}
 
+	public Money getFeatchFunds() {
+		return featchFunds;
+	}
+
+	public void setFeatchFunds(Money featchFunds) {
+		this.featchFunds = featchFunds;
+	}
+
+	public Money getFreezeFunds() {
+		return freezeFunds;
+	}
+
+	public void setFreezeFunds(Money freezeFunds) {
+		this.freezeFunds = freezeFunds;
+	}
+
 	public String toString() {
-		return "totalValue : " + totalValue + ",stockValue : " + stockValue + ",availableFunds : " + availableFunds;
+		return "totalValue : " + totalValue + ",stockValue : " + stockValue + ",availableFunds : " + availableFunds+",featchFunds : " + featchFunds +",freezeFunds : " + freezeFunds +"\n";
 	}
 	
 }

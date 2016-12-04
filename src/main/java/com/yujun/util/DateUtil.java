@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 public class DateUtil {
-	public static Calendar cal = Calendar.getInstance();//Ê¹ÓÃÄ¬ÈÏÊ±ÇøºÍÓïÑÔ»·¾³»ñµÃÒ»¸öÈÕÀú¡£ 
+	public static Calendar cal = Calendar.getInstance();//Ê¹ï¿½ï¿½Ä¬ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 	public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");  
-	public static boolean isOpenTradeTime() throws Exception{
+	public static boolean isOpenTradeTime() {
 		Calendar open = Calendar.getInstance();
 		open.set(Calendar.HOUR_OF_DAY, 9);
 		open.set(Calendar.MINUTE,15);
@@ -27,8 +27,12 @@ public class DateUtil {
 		
 		Date now = new Date();
 		for (Date noTradeDay : noTradeDays) {
-			if (daysBetween(now,noTradeDay) ==0) {
-				return false;
+			try {
+				if (daysBetween(now,noTradeDay) ==0) {
+					return false;
+				}
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
 			}
 		}
 		return now.after(open.getTime()) && now.before(close.getTime());
@@ -36,7 +40,7 @@ public class DateUtil {
 	}
 	
 	/**
-	 * ÊÇ·ñÊÇÊÕÅÌÇ°×îºóÒ»·ÖÖÓ
+	 * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
 	 * @return
 	 */
 	public static boolean needCancelOrder() {
@@ -88,7 +92,7 @@ public class DateUtil {
 	 
 	 public static Date addDay(Date date , int day) {
 		 cal.setTime(date); 
-		 cal.add(Calendar.DATE, day);//È¡µ±Ç°ÈÕÆÚµÄÇ°Ò»Ìì.  
+		 cal.add(Calendar.DATE, day);//È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Úµï¿½Ç°Ò»ï¿½ï¿½.  
 		 return cal.getTime();
 	 }
 }

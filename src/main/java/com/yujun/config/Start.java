@@ -21,25 +21,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableScheduling
 @ComponentScan("com.yujun")
 @EnableAutoConfiguration 
-@Controller
 public class Start {
-
-	@RequestMapping("/stockDetail")  
-	public String stockDetail(Map<String, Object> model){  
-	    List<String> list= new ArrayList(); 
-	    list.add("我要我们在一起都是！额！");
-	    model.put("data",list);  
-	    return "stockDetail";  
-	} 
-	
-	@RequestMapping("/")  
-	public String hello(Map<String, Object> model){  
-	    List<String> list= new ArrayList(); 
-	    list.add("我要我们在一起都是！额！");
-	    model.put("data",list);  
-	    return "hello";  
-	}  
-	
+ 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Start.class, args);
     }

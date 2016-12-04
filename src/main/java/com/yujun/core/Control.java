@@ -1,4 +1,4 @@
-package com.yujun.core;
+/*package com.yujun.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import com.yujun.TdxClient;
 import com.yujun.calculate.TradeOrder;
 import com.yujun.calculate.impl.HighAndLowPriceCal;
 import com.yujun.calculate.impl.TenPercentAndOther;
@@ -45,7 +44,7 @@ public class Control {
 				if(taskList.isEmpty()) {
 					init();
 				} 
-				if(DateUtil.needCancelOrder()) {	// ÊÕÊÐÇ°×îºóÒ»·ÖÖÓ£¬²âµ¥
+				if(DateUtil.needCancelOrder()) {	// ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ó£ï¿½ï¿½âµ¥
 					cancle();
 				} else {
 					orders();
@@ -61,18 +60,18 @@ public class Control {
 		log.info("==============orders start======================");
 		for(Task task : taskList) {
 			try{ 
-				log.info("\n\n¿ªÊ¼ÏÂµ¥£º"+task.getStockDO());
+				log.info("\n\nï¿½ï¿½Ê¼ï¿½Âµï¿½ï¿½ï¿½"+task.getStockDO());
 				String zqCode 			= task.getStockDO().getZqCode();
 				StockDO hoding 			= task.getTdxClient().queryStockDO(zqCode);
 				if(hoding==null || hoding.getAmount() ==0) {
-					log.info("ÒÑ¾­²»³ÖÓÐ¸Ã¹ÉÆ±£¬" + task.getStockDO());
+					log.info("ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¸Ã¹ï¿½Æ±ï¿½ï¿½" + task.getStockDO());
 					continue;
 				}
 				
 				OnlinePriceDO online 	= task.getTdxClient().queryMarket(zqCode);
 				Map<String,StockDO> lh 	= task.getTradeOrder().calculate(task.getStockDO(),hoding, online);
 				
-				StockDO target = lh.get("low");	// ¶©µ¥ÂòÈë¼Û
+				StockDO target = lh.get("low");	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if(target !=null) {
 					OrderDO orderDO = task.getTdxClient().haveDelegate(true,zqCode);
 					if(orderDO !=null) {
@@ -90,7 +89,7 @@ public class Control {
 						}
 					}
 				}
-				target = lh.get("high");	// ¶©µ¥Âô³ö¼Û
+				target = lh.get("high");	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if(target !=null) {
 					OrderDO orderDO = task.getTdxClient().haveDelegate(false,zqCode);
 					if(orderDO !=null) {
@@ -118,7 +117,7 @@ public class Control {
 	}
 	
 	public void cancle() {
-		log.info("\n\n¿ªÊ¼²âµ¥");
+		log.info("\n\nï¿½ï¿½Ê¼ï¿½âµ¥");
 		for(Task task : taskList) {
 			List<OrderDO> orderDOs = task.getTdxClient().queryDelegate();
 			for(OrderDO orderDO : orderDOs) {
@@ -141,10 +140,11 @@ public class Control {
 	}
 	
 	public void test() {
-		/*monitorStockList = new HashMap<StockDO,TdxClient>();
+		monitorStockList = new HashMap<StockDO,TdxClient>();
 		TdxClient tdxClient1 = new TdxClient(1);
-		monitorStockList.put(new StockDO("600750",5600,new Money("35.9")),tdxClient1);*/
+		monitorStockList.put(new StockDO("600750",5600,new Money("35.9")),tdxClient1);
 		init();
 		orders();
 	}
 }
+*/

@@ -3,24 +3,24 @@ package com.yujun.domain;
 import com.yujun.util.Money;
 
 /**
- * Î¯ÍĞ
+ * å§”æ‰˜
  * @author yujun
  *
  */
 public class OrderDO {
-	private String zqCode;		//Ö¤È¯´úÂë
-	private String zqName;		//Ö¤È¯Ãû³Æ
-	private String date;		//Î¯ÍĞÊ±¼ä
-	private boolean isBuy;		//ÂòÂô
-	private Money price;		//Î¯ÍĞ¼Û¸ñ
-	private	long amount;		//Î¯ÍĞÊıÁ¿
-	private String orderId;		// ¶©µ¥id
-	private int status;			// ×´Ì¬
-	public static int SUCCESS =1;	// ÒÑ³É
-	public static int CANCLE  =2;	// ÒÑ³·
-	public static int WAITING =3;	// ÒÑ±¨
-	public static int PART_SUCCESS =4;	// ²¿³É
-	public static int PART_CANCLE =5;	// ²¿³·
+	private String zqCode;		//è¯åˆ¸ä»£ç 
+	private String zqName;		//è¯åˆ¸åç§°
+	private String date;		//å§”æ‰˜æ—¶é—´
+	private boolean isBuy;		//ä¹°å–
+	private Money price;		//å§”æ‰˜ä»·æ ¼
+	private	long amount;		//å§”æ‰˜æ•°é‡
+	private String orderId;		// è®¢å•id
+	private int status;			// çŠ¶æ€
+	public static int SUCCESS =1;	// å·²æˆ
+	public static int CANCLE  =2;	// å·²æ’¤
+	public static int WAITING =3;	// å·²æŠ¥
+	public static int PART_SUCCESS =4;	// éƒ¨æˆ
+	public static int PART_CANCLE =5;	// éƒ¨æ’¤
 	public String getZqCode() {
 		return zqCode;
 	}
@@ -73,6 +73,6 @@ public class OrderDO {
 	public String toString() {
 		return "zqCode : " + zqCode + ",zqName : " + zqName + ",date : " + date
 				+ ",isBuy : " + isBuy + ",status : " + status + ",price : " + price + ",amount : "
-				+ amount + ",orderId : " + orderId;
+				+ amount + ",orderId : " + orderId+"\n";
 	}
 }
