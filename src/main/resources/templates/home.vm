@@ -1,4 +1,4 @@
-#parse("head.vm")
+#parse("layout/head.vm")
  <div class="container">
   	<div class="starter-template">
 	   	 <div class="row">
@@ -29,10 +29,10 @@
 	            <td>$!stock.amount $!stock.salesAmount</td>
 	            <td>$!stock.nowPrice $!stock.avaPrice</td>
 	            <td>$!stock.floatValue $!stock.floatRate</td>
-	            <td><a href="/stock_detail.htm?zqCode=$!stock.zqCode">详情</a></td>
+	            <td><a href="/detail.htm?zqCode=$!stock.zqCode">详情</a></td>
 	          </tr>
           #end
         </tbody>
       </table>
 </div>
-#parse("foot.vm")
+#parse("layout/foot.vm")

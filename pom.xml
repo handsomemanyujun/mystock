@@ -43,7 +43,11 @@
 		    <version>2.6.12</version>
 		</dependency>
 		
-		
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>fastjson</artifactId>
+		    <version>1.2.21</version>
+		</dependency>
          <dependency>
 		    <groupId>com.sun.jna</groupId>
 		    <artifactId>jna</artifactId>

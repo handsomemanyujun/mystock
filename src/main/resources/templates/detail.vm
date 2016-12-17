@@ -1,4 +1,4 @@
- #parse("head.vm")
+ #parse("layout/head.vm")
  
  
  <style type="text/css">
@@ -20,9 +20,8 @@
 	        <div class="col-md-4 col-xs-12"">持有股数：$!stock.amount股</div>
 	        <div class="col-md-4 col-xs-12"">最新市值：$!stock.nowValue元</div>
 	        <div class="col-md-4 col-xs-12"">可卖数量：$!stock.salesAmount股</div>
-	        <div class="col-md-4 col-xs-12"">浮动盈亏：$!stock.floatValue元</div>
-	        <div class="col-md-4 col-xs-6"">盈亏比例：$!stock.floatRate%</div>
-	        <div class="col-md-4 col-xs-6"">自动下单：是</div>
+	        <div class="col-md-4 col-xs-12"">浮动盈亏：$!stock.floatValue元/$!stock.floatRate%</div>
+	        <div class="col-md-4 col-xs-12"">自动下单：开启</div>
 	      </div>
 	      
 	      <div class="row">
@@ -31,4 +30,4 @@
 	      </div>
       </div>
 </div>
- #parse("foot.vm")
+ #parse("layout/foot.vm")
