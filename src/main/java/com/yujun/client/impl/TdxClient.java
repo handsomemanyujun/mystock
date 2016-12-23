@@ -173,9 +173,9 @@ public class TdxClient implements StockClient{
 	 * @return
 	 */
 	public OrderDO haveDelegate(String userId,boolean isBuy, String zqdm){
-		List<OrderDO> list = queryDelegate(userId);
+		List<OrderDO> list = queryDelegate(userId,zqdm);
 		for(OrderDO orderDO: list) {
-			if(orderDO.isBuy() == isBuy && orderDO.getZqCode().equals(zqdm) && (orderDO.getStatus() == OrderDO.WAITING || orderDO.getStatus() == OrderDO.PART_SUCCESS)) {
+			if(orderDO.isBuy() == isBuy && (orderDO.getStatus() == OrderDO.WAITING || orderDO.getStatus() == OrderDO.PART_SUCCESS)) {
 				log.info("存在"+ (isBuy ?"买":"卖")+"委托单，委托单是： " + orderDO);
 				return orderDO;
 			}
@@ -189,7 +189,7 @@ public class TdxClient implements StockClient{
 	 * 查询委托情况
 	 * @return
 	 */
-	public List<OrderDO> queryDelegate(String userId) {
+	public List<OrderDO> queryDelegate(String userId,String zqdm) {
 		List list = new ArrayList<OrderDO>();
 		tdxLibrary.QueryData(clientID, 2, result, errInfo);
 		String res = Native.toString(result, "GBK");
@@ -197,6 +197,9 @@ public class TdxClient implements StockClient{
 		if(res !=null) {
 			String[][] items =TdxResultUtil.parseStr(res);
 			for(int i=1 ;i<items.length; i++) {
+				if (!StringUtils.isEmpty(zqdm) && !zqdm.equals(items[i][1])) {
+					continue;
+				}
 				OrderDO orderDO = new OrderDO();
 				orderDO.setZqCode(items[i][1]);
 				orderDO.setZqName(items[i][2]);
@@ -209,7 +212,7 @@ public class TdxClient implements StockClient{
 				if("买入".equals(items[i][4])) {
 					orderDO.setBuy(true);
 				}
-				
+				orderDO.setStatusDesc(items[i][5]);
 				if("已成".equals(items[i][5])|| "废单".equals(items[i][5])) {
 					orderDO.setStatus(OrderDO.SUCCESS);
 				} else if("已撤".equals(items[i][5])) {
@@ -271,9 +274,9 @@ public class TdxClient implements StockClient{
 	 */
 	private boolean canOrder(String userId,boolean isBuy, String zqdm){
 		int sum =0;
-		List<OrderDO> list = queryDelegate(userId);
+		List<OrderDO> list = queryDelegate(userId,zqdm);
 		for(OrderDO orderDO: list) {
-			if(orderDO.getZqCode().equals(zqdm) && orderDO.getStatus() == OrderDO.SUCCESS) {
+			if(orderDO.getStatus() == OrderDO.SUCCESS) {
 				if(orderDO.isBuy()) {
 					sum ++;
 				} else {

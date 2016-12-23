@@ -34,7 +34,7 @@ public interface StockClient {
 	 * 查询委托情况
 	 * @return
 	 */
-	public List<OrderDO> queryDelegate(String userId);
+	public List<OrderDO> queryDelegate(String userId,String zqdm);
 	
 	/**
 	 * 查询目标股票价格

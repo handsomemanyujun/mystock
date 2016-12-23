@@ -16,6 +16,7 @@ public class OrderDO {
 	private	long amount;		//委托数量
 	private String orderId;		// 订单id
 	private int status;			// 状态
+	private String statusDesc;	// 状态描述
 	public static int SUCCESS =1;	// 已成
 	public static int CANCLE  =2;	// 已撤
 	public static int WAITING =3;	// 已报
@@ -69,6 +70,13 @@ public class OrderDO {
 	}
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	
+	public String getStatusDesc() {
+		return statusDesc;
+	}
+	public void setStatusDesc(String statusDesc) {
+		this.statusDesc = statusDesc;
 	}
 	public String toString() {
 		return "zqCode : " + zqCode + ",zqName : " + zqName + ",date : " + date

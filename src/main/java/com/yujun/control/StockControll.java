@@ -29,6 +29,7 @@ public class StockControll {
 	@RequestMapping("/detail")  
 	public String stockDetail(@RequestParam String zqCode, Map<String, Object> model){  
 		model.put("stock",client.queryStockDO("62124349",zqCode).get(0));  
+		model.put("orders",client.queryDelegate("62124349",zqCode));  
 	    return "detail";  
 	}
 	

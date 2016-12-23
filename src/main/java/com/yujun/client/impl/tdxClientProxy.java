@@ -41,8 +41,8 @@ public class tdxClientProxy implements StockClient{
 		return tdxClinets.get(userId).haveDelegate(userId,isBuy,zqdm);
 	}
 	@Override
-	public List<OrderDO> queryDelegate(String userId) {
-		return tdxClinets.get(userId).queryDelegate(userId);
+	public List<OrderDO> queryDelegate(String userId,String zqdm) {
+		return tdxClinets.get(userId).queryDelegate(userId,zqdm);
 	}
 	@Override
 	public OnlinePriceDO queryMarket(String userId, String zqdm) {
