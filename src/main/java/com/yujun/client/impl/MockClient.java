@@ -59,7 +59,7 @@ public class MockClient implements StockClient{
 	}
 
 	@Override
-	public List<OrderDO> queryDelegate(String userId) {
+	public List<OrderDO> queryDelegate(String userId,String zqzh) {
 		List<OrderDO> list = new ArrayList<OrderDO>();
 		OrderDO orderDO = new OrderDO();
 		orderDO.setAmount(12);
@@ -96,5 +96,6 @@ public class MockClient implements StockClient{
 		// TODO Auto-generated method stub
 		
 	}
+
 
 }
