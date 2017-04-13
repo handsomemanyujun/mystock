@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import com.yujun.domain.StockDO;
 import com.yujun.util.Money;
+import com.yujun.util.ThreadLocalPool;
 
 /**
  * 计算应持有的股票数量
@@ -12,7 +13,6 @@ import com.yujun.util.Money;
  */
 public class HoldingStockCal {
 	Logger log = Logger.getLogger(this.getClass());
-	
 	public long[][] calStockRegion(StockDO initStock) {
 		long[][]  priceRegion = new long[70][2];
 		
@@ -44,6 +44,7 @@ public class HoldingStockCal {
 			}
 		}
 		log.info(initStock.getZqCode() +",的1%波段区间\n" + buffer.toString());
+		ThreadLocalPool.getStringBuf().append(initStock.getZqCode() +",的1%波段区间\n" + buffer.toString());
 		return priceRegion;
 	}
 	

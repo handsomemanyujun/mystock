@@ -1,2 +1,0 @@
-mvn eclipse:eclipse
-@pause

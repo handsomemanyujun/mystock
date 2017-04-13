@@ -8,6 +8,7 @@ import com.yujun.domain.OrderDO;
 import com.yujun.domain.StockDO;
 
 public interface StockClient {
+	public boolean login(String userId,String passWord,String gddm);
 	/**
 	 * 查询目前总资金情况
 	 * @return
@@ -57,4 +58,5 @@ public interface StockClient {
 	 * @param isBuy
 	 */
 	public void crateOrder(String userId, OrderDO orderDO) ;
+	
 }

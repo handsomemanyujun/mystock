@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.yujun.calculate.HoldingStockCal;
 import com.yujun.calculate.TradeOrder;
@@ -18,16 +19,20 @@ import com.yujun.domain.StockDO;
 import com.yujun.util.DevitionUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
+import com.yujun.util.ThreadLocalPool;
 
 /**
- * ÉÏÏÂÇø¼äÂòÈëÂô³öËã·¨
+ * ä¸Šä¸‹åŒºé—´ä¹°å…¥å–å‡ºç®—æ³•
  * @author yujun
  *
  */
+@Component
 public class HighAndLowPriceCal implements TradeOrder{
 	Logger log = Logger.getLogger(this.getClass());
+	ThreadLocal<StringBuffer> buf = new ThreadLocal<StringBuffer>();
 	HoldingStockCal holdingStockCal = new HoldingStockCal();
-	public Map<String,StockDO> calculate(StockDO initStockDO, StockDO hoding, OnlinePriceDO online ) {
+	public Map<String,StockDO> calculate(StockDO initStockDO, StockDO hoding, OnlinePriceDO online,int range) {
+		String tempStr ="";
 		long[][] priceRegion 	= holdingStockCal.calStockRegion(initStockDO);
 		Map<String,StockDO> result = new HashMap<String,StockDO>();
 		StockDO[] byAmont = priceRegionByAmont(priceRegion,hoding);
@@ -39,14 +44,14 @@ public class HighAndLowPriceCal implements TradeOrder{
 		low  = byAmont[0];
 		high = byAmont[1];
 		
-		// Èç¹û¹ÉÊıÇø¼äµÄ×îµÍ¼Û´óÓÚ ½ğ¶îÇø¼äµÄ×î¸ß¼Û
-		// Ôò½«ÂòÈëµÄ×îµÍ¼ÛÒÔ¼°ÊıÁ¿¸Ä³É½ğ¶îÇø¼äµÄ×î¸ß¼Û
+		// å¦‚æœè‚¡æ•°åŒºé—´çš„æœ€ä½ä»·å¤§äº é‡‘é¢åŒºé—´çš„æœ€é«˜ä»·
+		// åˆ™å°†ä¹°å…¥çš„æœ€ä½ä»·ä»¥åŠæ•°é‡æ”¹æˆé‡‘é¢åŒºé—´çš„æœ€é«˜ä»·
 		if(low !=null && byPrice!=null&&low.getAvaPrice().getCent() > byPrice[1].getAvaPrice().getCent()) { 
 			low  = byPrice[1];
 		}
 		
-		// Èç¹û¹ÉÊıÇø¼äµÄ×î¸ß¼ÛĞ¡ÓÚÓÚ½ğ¶îÇø¼äµÄ×îµÍ¼Û
-		// Ôò½«Âô³öµÄ×î¸ß¼ÛÒÔ¼°ÊıÁ¿¸Ä³É½ğ¶îÇø¼äµÄ×îµÍ¼Û  
+		// å¦‚æœè‚¡æ•°åŒºé—´çš„æœ€é«˜ä»·å°äºäºé‡‘é¢åŒºé—´çš„æœ€ä½ä»·
+		// åˆ™å°†å–å‡ºçš„æœ€é«˜ä»·ä»¥åŠæ•°é‡æ”¹æˆé‡‘é¢åŒºé—´çš„æœ€ä½ä»·  
 		if(high !=null && byPrice!=null &&high.getAvaPrice().getCent() < byPrice[0].getAvaPrice().getCent()) {	
 			high = byPrice[0];
 		}
@@ -54,16 +59,21 @@ public class HighAndLowPriceCal implements TradeOrder{
 		result.put("low", low);
 		result.put("high", high);
 		if(high!=null) {
-			log.info("×îÖÕ¼Û¸ñÇø¼äÉÏÏŞÊÇ" + high.getAvaPrice() +":" + high.getAmount());
+			tempStr = "æœ€ç»ˆä»·æ ¼åŒºé—´ä¸Šé™æ˜¯" + high.getAvaPrice() +":" + high.getAmount();
+			log.info(tempStr);
+			ThreadLocalPool.getStringBuf().append(tempStr);
 		} else {
-			log.info("×îÖÕ¼Û¸ñÇø¼äÉÏÏŞ³¬³ö¼ÆËã·¶Î§£¬ÇëÊÖ¶¯¼ÆËã");
+			tempStr = "æœ€ç»ˆä»·æ ¼åŒºé—´ä¸Šé™è¶…å‡ºè®¡ç®—èŒƒå›´ï¼Œè¯·æ‰‹åŠ¨è®¡ç®—";
+			log.info(tempStr);
+			ThreadLocalPool.getStringBuf().append(tempStr);
 		}
 		
-		log.info("×îÖÕ¼Û¸ñÇø¼äÏÂÏŞÊÇ" + low.getAvaPrice()+":" + low.getAmount());
-		
+		tempStr = "æœ€ç»ˆä»·æ ¼åŒºé—´ä¸‹é™æ˜¯" + low.getAvaPrice()+":" + low.getAmount();
+		log.info(tempStr);
+		ThreadLocalPool.getStringBuf().append(tempStr);
 		
 		/*if(online.getNowPrice().greaterThan(hoding.getAvaPrice())){
-			log.info("µ±Ç°¼Û¸ñ³¬¹ı³É±¾Ïß¼Û¸ñ£¬ ²»×÷²Ù×÷");
+			log.info("å½“å‰ä»·æ ¼è¶…è¿‡æˆæœ¬çº¿ä»·æ ¼ï¼Œ ä¸ä½œæ“ä½œ");
 		}*/
 		return result;
 	}
@@ -76,11 +86,11 @@ public class HighAndLowPriceCal implements TradeOrder{
 		long standard = rangeOfPrice(hoding.getZqCode());	
 		
 		int  index =-1;
-		log.info("°´ÕÕµ±Ç°³Ö¹ÉÊıÊÇ" + hoding.getAmount());
+		log.info("æŒ‰ç…§å½“å‰æŒè‚¡æ•°æ˜¯" + hoding.getAmount());
 		for(int i = 0 ; i<priceRegion.length  ;i++){
 			if(hoding.getAmount() <= priceRegion[i][1]) {
 				index = i ;
-				log.info("Ñ¡Ôñµ½µÄÇø¼äÊÇ" + priceRegion[i][0] +":" +priceRegion[i][1] );
+				log.info("é€‰æ‹©åˆ°çš„åŒºé—´æ˜¯" + priceRegion[i][0] +":" +priceRegion[i][1] );
 				break;
 			}
 		}
@@ -100,13 +110,13 @@ public class HighAndLowPriceCal implements TradeOrder{
 					} else {
 						high = new StockDO(null,priceRegion[i][1],new Money(highest));
 					}
-					log.info("°´³Ö¹ÉÊı¼ÆËã³öµÄ¼Û¸ñÇø¼äÉÏÏŞÊÇ" + high.getAvaPrice() +":" + high.getAmount());
+					log.info("æŒ‰æŒè‚¡æ•°è®¡ç®—å‡ºçš„ä»·æ ¼åŒºé—´ä¸Šé™æ˜¯" + high.getAvaPrice() +":" + high.getAmount());
 					break;
 				}
 			}
 			
 			if(high==null) {
-				log.info("³¬³ö¼ÆËã·¶Î§£¬×î¸ß¼Û¸ñÊÇ" + highest);
+				log.info("è¶…å‡ºè®¡ç®—èŒƒå›´ï¼Œæœ€é«˜ä»·æ ¼æ˜¯" + highest);
 			} 
 			
 			for (int i = priceRegion.length-1; i > 0; i--) {
@@ -118,7 +128,7 @@ public class HighAndLowPriceCal implements TradeOrder{
 					} else {
 						low = new StockDO(null,priceRegion[i][1] ,new Money(lowest));
 					}
-					log.info("°´³Ö¹ÉÊı¼ÆËã³öµÄ¼Û¸ñÇø¼äÏÂÏŞÊÇ" + low.getAvaPrice()+":" + low.getAmount());
+					log.info("æŒ‰æŒè‚¡æ•°è®¡ç®—å‡ºçš„ä»·æ ¼åŒºé—´ä¸‹é™æ˜¯" + low.getAvaPrice()+":" + low.getAmount());
 					break;
 				}
 			}
@@ -133,7 +143,7 @@ public class HighAndLowPriceCal implements TradeOrder{
 	
 	public StockDO[] priceRegionByPrice(long[][] priceRegion ,OnlinePriceDO online) {
 		if(online.getNowPrice().getCent() <=0) {	
-			//»¹Ã»¿ªÅÌ
+			//è¿˜æ²¡å¼€ç›˜
 			return null;
 		}
 		StockDO low = null;
@@ -147,9 +157,9 @@ public class HighAndLowPriceCal implements TradeOrder{
 		}
 		
 		if(low!=null && high!=null) {
-			log.info("°´ÕÕµ±Ç°¹ÉÆ±¼Û¸ñ" + online.getNowPrice());
-			log.info("°´¼Û¸ñ¼ÆËãµÄ¼Û¸ñÇø¼äÉÏÏŞÊÇ" + high.getAvaPrice() +":" + high.getAmount());
-			log.info("°´¼Û¸ñ¼ÆËãµÄ¼Û¸ñÇø¼äÏÂÏŞÊÇ" + low.getAvaPrice()+":" + low.getAmount());
+			log.info("æŒ‰ç…§å½“å‰è‚¡ç¥¨ä»·æ ¼" + online.getNowPrice());
+			log.info("æŒ‰ä»·æ ¼è®¡ç®—çš„ä»·æ ¼åŒºé—´ä¸Šé™æ˜¯" + high.getAvaPrice() +":" + high.getAmount());
+			log.info("æŒ‰ä»·æ ¼è®¡ç®—çš„ä»·æ ¼åŒºé—´ä¸‹é™æ˜¯" + low.getAvaPrice()+":" + low.getAmount());
 			
 			StockDO[] result = new StockDO[2];
 			result[0] = low;
@@ -191,9 +201,9 @@ public class HighAndLowPriceCal implements TradeOrder{
 			
 			double average = DevitionUtil.getAverageOther(price);
 			double standard = DevitionUtil.getStandardDevition(price);
-			log.info("×î½üµÄ¼¸ÌìµÄ¼Û¸ñ²¨¶¯·¶Î§ÊÇ" + priceStr);
-			log.info("²¨¶¯¼ÓÈ¨ËãÊıÆ½¾ùÖµÊÇ" + average);
-			log.info("¹ÉÆ±²¨¶¯·¶Î§±ê×¼²îÊÇ" + standard);
+			log.info("æœ€è¿‘çš„å‡ å¤©çš„ä»·æ ¼æ³¢åŠ¨èŒƒå›´æ˜¯" + priceStr);
+			log.info("æ³¢åŠ¨åŠ æƒç®—æ•°å¹³å‡å€¼æ˜¯" + average);
+			log.info("è‚¡ç¥¨æ³¢åŠ¨èŒƒå›´æ ‡å‡†å·®æ˜¯" + standard);
 			
 			for (int i = 0; i < price.length; i++) {
 				PriceDO of1 = list.get(list.size() - 1 - i);
@@ -202,7 +212,7 @@ public class HighAndLowPriceCal implements TradeOrder{
 				priceStr +=price[i]+",";
 			}
 			double priceStandard = DevitionUtil.getStandardDevition(price);
-			log.info("¹ÉÆ±¼Û¸ñ±ê×¼²îÊÇ" + priceStandard);
+			log.info("è‚¡ç¥¨ä»·æ ¼æ ‡å‡†å·®æ˜¯" + priceStandard);
 			
 			return (long)(average);
 		} catch (Exception e) {

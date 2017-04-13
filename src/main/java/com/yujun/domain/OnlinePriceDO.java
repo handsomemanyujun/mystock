@@ -3,38 +3,38 @@ package com.yujun.domain;
 import com.yujun.util.Money;
 
 /**
- * ¹ÉÆ±ÊµÊ±ĞĞÇé
+ * è‚¡ç¥¨å®æ—¶è¡Œæƒ…
  * @author yujun
  *
  */
 public class OnlinePriceDO {
 	/**
-	 * Ö¤È¯´úÂë
+	 * è¯åˆ¸ä»£ç 
 	 */
 	private String zqCode;
 	/**
-	 * Ö¤È¯Ãû³Æ
+	 * è¯åˆ¸åç§°
 	 */
 	private String zqName;
 	
 	/**
-	 * ×òÈÕÊÕÅÌ¼Û¸ñ
+	 * æ˜¨æ—¥æ”¶ç›˜ä»·æ ¼
 	 */
 	private Money yPrice;
 	
 	/**
-	 * ½ñÈÕ¿ªÅÌ¼Û¸ñ
+	 * ä»Šæ—¥å¼€ç›˜ä»·æ ¼
 	 */
 	private Money nsPrice;
 	
 	/**
-	 * µ±Ç°¼Û¸ñ
+	 * å½“å‰ä»·æ ¼
 	 */
 	private Money nowPrice;
 	
 	/**
 	 * 
-	 * @return Ê±¼ä
+	 * @return æ—¶é—´
 	 */
 	private String date;
 	

@@ -59,7 +59,7 @@ public class MockClient implements StockClient{
 	}
 
 	@Override
-	public List<OrderDO> queryDelegate(String userId) {
+	public List<OrderDO> queryDelegate(String userId, String zqdm) {
 		List<OrderDO> list = new ArrayList<OrderDO>();
 		OrderDO orderDO = new OrderDO();
 		orderDO.setAmount(12);
@@ -67,6 +67,7 @@ public class MockClient implements StockClient{
 		orderDO.setDate("20161203");
 		orderDO.setOrderId("123");
 		orderDO.setPrice(new Money(123));
+		orderDO.setStatusDesc("已成交");
 		orderDO.setStatus(1);
 		orderDO.setZqCode("300031");
 		orderDO.setZqName("深圳通宝");
@@ -97,4 +98,9 @@ public class MockClient implements StockClient{
 		
 	}
 
+	@Override
+	public boolean login(String userId, String passWord, String gddm) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

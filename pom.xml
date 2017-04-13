@@ -58,11 +58,26 @@
     <!-- Package as an executable jar -->
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+			        <mainClass>com.yujun.Start</mainClass>
+			        <addResources>true</addResources>
+			    </configuration>
+				<executions>
+			           <execution>
+				       <goals>
+				           <goal>repackage</goal>
+				       </goals>
+				       <configuration>
+				           <classifier>exec</classifier>
+				       </configuration>
+				    </execution>
+			        </executions>
+			</plugin>
+		</plugins>
+		
     </build>
 
     <!-- Add Spring repositories -->

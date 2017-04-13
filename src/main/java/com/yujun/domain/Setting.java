@@ -1,11 +1,15 @@
 package com.yujun.domain;
 
+import com.yujun.util.Money;
+
 public class Setting {
-	private String userId;
+	private String userId;	//账户号码
 	private String code;
 	private float rate;
 	private int amount;
-	private int value;
+	private float price;
+	private int type=1;
+	private int status =0; //1： 执行中，0：暂停
 
 	public String getCode() {
 		return code;
@@ -31,12 +35,12 @@ public class Setting {
 		this.amount = amount;
 	}
 
-	public int getValue() {
-		return value;
+	public float getPrice() {
+		return price;
 	}
 
-	public void setValue(int value) {
-		this.value = value;
+	public void setPrice(float price) {
+		this.price = price;
 	}
 
 	public String getUserId() {
@@ -45,5 +49,28 @@ public class Setting {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+	public StockDO buildStockDO(){
+		StockDO stockDO = new StockDO();
+		stockDO.setZqCode(this.code);
+		stockDO.setAmount(this.amount);
+		stockDO.setAvaPrice(new Money(this.price));
+		return stockDO;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

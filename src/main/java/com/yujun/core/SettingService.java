@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -24,24 +26,32 @@ import com.yujun.domain.Setting;
  * @author yujun
  *
  */
-@Component
-public class ConfigService {
-	Logger logger=LoggerFactory.getLogger(ConfigService.class);
-	private Map<String, Map<String,Setting>> config;
-	Resource re = new ClassPathResource("stock_setting.db");
+@Service
+public class SettingService {
+	Logger logger=LoggerFactory.getLogger(SettingService.class);
+	private Map<String, Map<String,Setting>> settings = new HashMap<String, Map<String,Setting>>();
+	Resource re = new FileSystemResource("D:/source/mystockmvn/src/main/resources/stock_setting.db");
+	
+	public Map<String, Map<String,Setting>> getAllUserSetting() throws Exception{
+		if(settings == null) {
+			initConfig();	
+		}
+		return settings;
+	}
 	
 	public Setting getUserConfig(String userId,String code) throws Exception{
-		Map<String,Setting> config = getSetting(userId);
-		return config !=null ? config.get(code):null;
+		Map<String,Setting> setting = getSetting(userId);
+		return setting !=null ? setting.get(code):null;
 	}
 
 	public Map<String, Setting> getSetting(String userId) {
-		if (config == null) {
+		if (settings == null) {
 			initConfig();
 		}
-		return config.get(userId);
+		return settings.get(userId);
 	}
 	
+	@PostConstruct
 	public void initConfig() {
 		try {
 			StringBuffer buf = new StringBuffer();
@@ -56,11 +66,17 @@ public class ConfigService {
 			
 			
 			if(buf.length()>0){
-				config = new HashMap<String, Map<String,Setting>>();
+				Map<String, Map<String,Setting>>  newsettings = new HashMap<String, Map<String,Setting>>();
 				List<Setting> settings = (List<Setting>) JSONArray.parseArray(buf.toString(), Setting.class);
 				for(Setting setting : settings) {
-					putSetting(setting);
+					Map<String,Setting> map = newsettings.get(setting.getUserId());
+					if(map ==null) {
+						map = new HashMap();
+					}
+					map.put(setting.getCode(), setting);
+					newsettings.put(setting.getUserId(), map);
 				}
+				this.settings = newsettings;
 			} 
 		} catch (Exception e) {
 			logger.error("getSetting error.", e);
@@ -68,26 +84,27 @@ public class ConfigService {
 	}
 	
 	private void putSetting(Setting setting) {
-		Map<String,Setting> map = config.get(setting.getUserId());
+		Map<String,Setting> map = settings.get(setting.getUserId());
 		if(map ==null) {
 			map = new HashMap();
 		}
 		map.put(setting.getCode(), setting);
-		config.put(setting.getUserId(), map);
+		settings.put(setting.getUserId(), map);
 	}
-	public void updateNewSetting(Setting setting) {
-		if (config == null) {
+	public void updateNewSetting(Setting target) {
+		if (settings == null) {
 			initConfig();
 		}
-		putSetting(setting);
+		putSetting(target);
 		try {
 			List<Setting> list = new ArrayList<Setting>();
-			for(Map<String,Setting> userConfig : config.values()) {
-				for(Setting it :userConfig.values()){
+			for(Map<String,Setting> userSetting : settings.values()) {
+				for(Setting it :userSetting.values()){
 					list.add(it);
 				}
 			}
 			BufferedWriter br = new BufferedWriter(new FileWriter(re.getFile(),false));
+			re.getFile().getAbsoluteFile();
 			br.write(JSONObject.toJSONString(list));
 			br.flush(); //刷新缓冲区的数据到文件
 			br.close();
@@ -96,13 +113,17 @@ public class ConfigService {
 		}
 	}
 	
+	public void deleteSetting(String userId,String code) {
+		Map map = settings.get(userId);
+		map.remove(code);
+	}
 	public static void main(String[] args) {
-		ConfigService service = new ConfigService();
+		SettingService service = new SettingService();
 		Setting setting = new Setting();
 		setting.setAmount(12);
 		setting.setCode("3434");
 		setting.setRate(1.2f);
-		setting.setValue(23223);
+		setting.setPrice(23223);
 		setting.setUserId("12343");
 		service.updateNewSetting(setting);
 		
@@ -110,7 +131,7 @@ public class ConfigService {
 		setting1.setAmount(12);
 		setting1.setCode("34343");
 		setting1.setRate(1.2f);
-		setting1.setValue(23223);
+		setting1.setPrice(23223);
 		setting1.setUserId("12343");
 		service.updateNewSetting(setting1);
 		
@@ -118,7 +139,7 @@ public class ConfigService {
 		setting2.setAmount(12);
 		setting2.setCode("3434");
 		setting2.setRate(1.2f);
-		setting2.setValue(23223);
+		setting2.setPrice(23223);
 		setting2.setUserId("3435");
 		service.updateNewSetting(setting2);
 	}

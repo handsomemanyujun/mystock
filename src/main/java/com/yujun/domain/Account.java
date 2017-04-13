@@ -1,48 +1,43 @@
 package com.yujun.domain;
 
-import com.yujun.util.Money;
 
 public class Account {
-	/**
-	 * 总市值
-	 */
-	private Money totalValue;
-	
-	/**
-	 * 股票市值
-	 */
-	private Money stockValue;
-	
-	/**
-	 * 可用余额
-	 */
-	private Money availableFunds;
+	private String id;
+	private String password;
+	private String gddm; //股东代码
 
-	public Money getTotalValue() {
-		return totalValue;
+
+	public String getId() {
+		return id;
 	}
 
-	public void setTotalValue(Money totalValue) {
-		this.totalValue = totalValue;
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public Money getStockValue() {
-		return stockValue;
+
+	public String getPassword() {
+		return password;
 	}
 
-	public void setStockValue(Money stockValue) {
-		this.stockValue = stockValue;
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public Money getAvailableFunds() {
-		return availableFunds;
+
+	public String getGddm() {
+		return gddm;
 	}
 
-	public void setAvailableFunds(Money availableFunds) {
-		this.availableFunds = availableFunds;
+
+	public void setGddm(String gddm) {
+		this.gddm = gddm;
 	}
+
 
 	public String toString() {
-		return "totalValue : " + totalValue + ",stockValue : " + stockValue + ",availableFunds : " + availableFunds;
+		return "id : " + id + ",password : " + password + ",gddm : " + gddm;
 	}
 }
