@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ import com.yujun.domain.Setting;
 public class SettingService {
 	Logger logger=LoggerFactory.getLogger(SettingService.class);
 	private Map<String, Map<String,Setting>> settings = new HashMap<String, Map<String,Setting>>();
-	Resource re = new FileSystemResource("D:/source/mystockmvn/src/main/resources/stock_setting.db");
+	Resource re = new ClassPathResource("stock_setting.db");
 	
 	public Map<String, Map<String,Setting>> getAllUserSetting() throws Exception{
 		if(settings == null) {
