@@ -1,0 +1,16 @@
+#parse("layout/head.vm")
+ <div class="container">
+	<div class="row">
+	  <div class="col-lg-6">
+	    <div class="input-group">
+	    <form action="login.htm" method="post">
+	      <input type="password" class="form-control" id='password' name='password'placeholder="请输入账号密码">
+	      <span class="input-group-btn">
+	        <input type='submit' class="btn btn-default"></button>
+	      </span>
+	      <form>
+	    </div>
+	  </div>
+</div>
+ </div>
+#parse("layout/foot.vm")

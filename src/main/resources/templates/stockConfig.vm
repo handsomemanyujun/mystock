@@ -1,0 +1,38 @@
+#parse("layout/head.vm")
+ <div class="container">
+  <table class="table table-condensed">
+		<thead>
+			<tr>
+				<th>股票代码</th>
+				<th>股票数量</th>
+				<th>股票价格</th>
+				<th>波段大小</th>
+				<th>状态</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+		 #foreach($setting in $!settings)
+			<tr>
+				<td>$setting.code/$!setting.name</td>
+				<td>$setting.amount</td>
+				<td>$setting.price</td>
+				<td>$setting.rate</td>
+				<td>#if($setting.status==1) 监控中 #else 未监控 #end </td>
+				<td><a href="stockConfig?code=$setting.code&action=2">修改</a> <a href="stockConfig?code=$setting.code&action=1">删除</a> </td>
+			</tr>
+		 #end
+		</tbody>
+	</table>
+	
+	<form action="stockConfig" method="post" id="config">
+		<input type="hidden" name="userId" value="$!userId"/>
+	  <p>股票代码: <input type="text" name="code" value="$!update.code" placeholder="被监控的股票代码" /></p>
+	  <p>购买数量: <input type="text" name="amount" value="$!update.amount" placeholder="初始化股票数量" /></p>
+	  <p>股票价格: <input type="text" name="price" value="$!update.price" placeholder="初始化股票价格"/></p>
+	  <p>波段大小: <input type="text" name="rate" value="$!update.rate" placeholder="买卖最小价差百分比"/></p>
+	  <input type="hidden" name="name" value="$!update.name"/>
+	  <input type="submit" value="提交设置" />
+	</form>
+ </div>
+#parse("layout/foot.vm")

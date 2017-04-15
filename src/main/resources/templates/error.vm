@@ -1,0 +1,31 @@
+#set( $page_title = "错误信息")  
+  
+#set($ex=$request.getAttribute("ex"))  
+  
+#set($err="Err:")  
+#if($ex.message.startsWith("Err:"))  
+    #set($message = $ex.message.substring($err.length(), $ex.message.length()))  
+#end  
+  
+<section class="wd640">  
+  
+    <!-- 信息反馈部分 -->  
+    <div class="content">  
+        <h3 class="title">信息反馈如下</h3>  
+  
+        <p class="txt"><strong>错误代码：</strong> #if($message) ${message} #else $ex.message #end</p>  
+  
+        <p class="txt"><strong>错误描述：</strong>  
+            #if($message)  
+                #if ($ex.message == "Err:0000")  
+                    非法请求  
+                #elseif ($ex.message == "Err:0001")  
+                    连接超时  
+                #end  
+            #else  
+                $ex.message  
+            #end  
+        </p>  
+    </div>  
+  
+</section>  
