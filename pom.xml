@@ -48,11 +48,11 @@
 		    <artifactId>fastjson</artifactId>
 		    <version>1.2.21</version>
 		</dependency>
-         <dependency>
-		    <groupId>com.sun.jna</groupId>
-		    <artifactId>jna</artifactId>
-		    <version>3.0.9</version>
-		</dependency>
+        <dependency>
+    <groupId>net.java.dev.jna</groupId>
+    <artifactId>jna</artifactId>
+    <version>4.2.2</version>
+</dependency>
     </dependencies>
 
     <!-- Package as an executable jar -->
