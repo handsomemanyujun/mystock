@@ -1,11 +1,11 @@
 package com.yujun.control;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,10 +84,8 @@ public class ScreenControll {
 		model.put("orders",client.queryDelegate(accountId,zqCode)); 
 		model.put("price",	ThreadLocalPool.getStringBuf().toString());  
 		Setting set = settingService.getUserConfig(accountId,zqCode);
-		if(set==null || set.getStatus()==0) {
-			model.put("status",	"关闭");
-		}else  {
-			model.put("status",	"开启");
+		if(set!=null) {
+			model.put("status",	set.getStatus()==0 ? "关闭":"开启");
 		}
 	    return "detail";  
 	}
@@ -131,8 +129,13 @@ public class ScreenControll {
 			return "login";
 		}
 		String accountId = ((String)session.getAttribute(ACCOUNT));
-		setting.setUserId(accountId);
-		settingService.updateNewSetting(setting);
+		
+		List<StockDO> list = client.queryStockDO(accountId,setting.getCode());
+		if(list.size()==1) {
+			setting.setName(list.get(0).getZqName());
+			setting.setUserId(accountId);
+			settingService.updateNewSetting(setting);
+		}
 		return "redirect:stockConfig";
 	}
 	

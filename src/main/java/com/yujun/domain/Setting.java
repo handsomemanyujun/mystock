@@ -9,8 +9,8 @@ public class Setting {
 	private int amount;
 	private float price;
 	private int type=1;
-	private int status =0; //1： 执行中，0：暂停
-
+	private String name;
+	private int status =0; //1： 执行中，0：未执行
 	public String getCode() {
 		return code;
 	}
@@ -73,4 +73,13 @@ public class Setting {
 	public void setStatus(int status) {
 		this.status = status;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 }

@@ -1,10 +1,10 @@
 package com.yujun.client.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.sun.jna.Library;
@@ -298,7 +298,7 @@ public class TdxClient implements StockClient{
 			return;
 		}
 		if (orderDO.getAmount() * orderDO.getPrice().getCent() < 20000 * 100) {
-			log.info("订单金额小于2w 不考虑买入" + orderDO);
+			log.info("订单金额小于2w 不考虑买入." + orderDO);
 			return;
 		}
 
@@ -318,7 +318,9 @@ public class TdxClient implements StockClient{
 		// 必须把Trade.dll等4个DLL复制到java工程目录下;
 		// java工程必须添加引用 jna.jar, 在 https://github.com/twall/jna 下载 jna.jar
 		// 无论用什么语言编程，都必须仔细阅读VC版内的关于DLL导出函数的功能和参数含义说明，不仔细阅读完就提出问题者因时间精力所限，恕不解答。
-		tdxLibrary = (TdxLibrary) Native.loadLibrary("trade", TdxLibrary.class);
+		//String root = this.getClass().getResource(".");
+		//File file = new File(root);
+		tdxLibrary = (TdxLibrary) Native.loadLibrary("D:\\source\\mystockmvn\\trade", TdxLibrary.class);
 		tdxLibrary.OpenTdx();
 		this.gddm = gddm.split(",");
 		// 登录

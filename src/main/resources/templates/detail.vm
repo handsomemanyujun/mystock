@@ -21,10 +21,11 @@
 	        <div class="col-md-4 col-xs-12"">最新市值：$!stock.nowValue元</div>
 	        <div class="col-md-4 col-xs-12"">可卖数量：$!stock.salesAmount股</div>
 	        <div class="col-md-4 col-xs-12"">浮动盈亏：$!stock.floatValue元/$!stock.floatRate%</div>
-	        <div class="col-md-4 col-xs-12"">自动下单：$!status</div>
+	        <div class="col-md-4 col-xs-12"">自动下单：#if($!status) $!status #else 未监控  #end</div>
 	      </div>
 	      
 	      <div class="row">
+	      	#if($!status)
 	      		<form action="start.htm" method="post">
 	      			<input type="hidden" id='zqCode' name='zqCode' value='$!stock.zqCode'>
 	        		<button type="sumbit" class="btn btn-lg btn-success">监控启动</button>
@@ -33,6 +34,7 @@
 	        		<input type="hidden" id='zqCode' name='zqCode' value='$!stock.zqCode'>
 	        		<button type="sumbit" class="btn btn-lg btn-success">监控停止</button>
 	        	</form>
+	        #end
 	      </div>
       </div>
       

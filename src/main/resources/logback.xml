@@ -16,7 +16,14 @@
             </Pattern>
         </layout>
     </appender>
-
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	    <!-- encoders are assigned the type
+	         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+	    <param name="Encoding" value="GBK" />
+	    <encoder>
+	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+	    </encoder>
+	  </appender>
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
@@ -46,7 +53,8 @@
     <logger name="org.hibernate.engine.QueryParameters" level="INFO" />
     <logger name="org.hibernate.engine.query.HQLQueryPlan" level="INFO" /> -->
 
-    <root level="INFO">
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
         <appender-ref ref="INFO_FILE" />
         <appender-ref ref="ERROR_FILE" />
     </root>

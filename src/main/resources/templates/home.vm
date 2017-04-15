@@ -16,19 +16,19 @@
         <thead>
           <tr>
             <th>股票</th>
-            <th>数量</th>
-            <th>价格</th>
-            <th>盈亏</th>
+            <th>总股数/可卖股数</th>
+            <th>成本价/当前价</th>
+            <th>盈亏额/盈亏比例</th>
             <th>操作</th>
           </tr>
         </thead>
         <tbody>
          #foreach($stock in $!stocks)
 	          <tr>
-	            <td>$!stock.zqName $!stock.zqCode</td>
-	            <td>$!stock.amount $!stock.salesAmount</td>
-	            <td>$!stock.nowPrice $!stock.avaPrice</td>
-	            <td>$!stock.floatValue $!stock.floatRate</td>
+	            <td>$!{stock.zqCode}/$!{stock.zqName}</td>
+	            <td>$!{stock.amount}/$!{stock.salesAmount}</td>
+	            <td>$!stock.nowPrice/$!stock.avaPrice</td>
+	            <td>$!stock.floatValue/$!stock.floatRate%</td>
 	            <td><a href="/detail.htm?zqCode=$!stock.zqCode">详情</a></td>
 	          </tr>
           #end

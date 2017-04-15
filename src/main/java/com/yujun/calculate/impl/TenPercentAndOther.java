@@ -146,7 +146,8 @@ public class TenPercentAndOther implements TradeOrder {
 			result[0] = low;
 			result[1] = high;
 			return result;
-		} 
+		}  
+		
 		return null;
 	}
 	
