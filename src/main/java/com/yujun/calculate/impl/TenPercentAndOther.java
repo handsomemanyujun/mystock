@@ -18,6 +18,7 @@ import com.yujun.util.DevitionUtil;
 import com.yujun.util.MathUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
+import com.yujun.util.ThreadLocalPool;
 @Component
 public class TenPercentAndOther implements TradeOrder {
 	Logger log = Logger.getLogger(this.getClass());
@@ -48,14 +49,20 @@ public class TenPercentAndOther implements TradeOrder {
 		
 		result.put("low", low);
 		result.put("high", high);
+		String tempStr=null;
 		if(high!=null) {
-			log.info("最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
+			tempStr = "最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount();
+			log.info(tempStr);
+			ThreadLocalPool.getStringBuf().append(tempStr);
 		} else {
-			log.info("最终价格区间上限超出计算范围，请手动计算");
+			tempStr = "最终价格区间上限超出计算范围，请手动计算";
+			log.info(tempStr);
+			ThreadLocalPool.getStringBuf().append(tempStr);
 		}
 		
-		log.info("最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
-		
+		tempStr = "最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount();
+		log.info(tempStr);
+		ThreadLocalPool.getStringBuf().append(tempStr);
 		
 		/*if(online.getNowPrice().greaterThan(hoding.getAvaPrice())){
 			log.info("当前价格超过成本线价格， 不作操作");
@@ -242,6 +249,7 @@ public class TenPercentAndOther implements TradeOrder {
 			}
 		}
 		log.info(initStock.getZqCode() +",的1%波段区间是" + buffer.toString());
+		ThreadLocalPool.getStringBuf().append(initStock.getZqCode() +",的1%波段区间\n" + buffer.toString());
 		return priceRegion;
 	}
 

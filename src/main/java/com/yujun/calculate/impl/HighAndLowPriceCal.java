@@ -32,7 +32,6 @@ public class HighAndLowPriceCal implements TradeOrder{
 	ThreadLocal<StringBuffer> buf = new ThreadLocal<StringBuffer>();
 	HoldingStockCal holdingStockCal = new HoldingStockCal();
 	public Map<String,StockDO> calculate(StockDO initStockDO, StockDO hoding, OnlinePriceDO online,int range) {
-		String tempStr ="";
 		long[][] priceRegion 	= holdingStockCal.calStockRegion(initStockDO);
 		Map<String,StockDO> result = new HashMap<String,StockDO>();
 		StockDO[] byAmont = priceRegionByAmont(priceRegion,hoding);
@@ -58,6 +57,7 @@ public class HighAndLowPriceCal implements TradeOrder{
 		
 		result.put("low", low);
 		result.put("high", high);
+		String tempStr;
 		if(high!=null) {
 			tempStr = "最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount();
 			log.info(tempStr);

@@ -17,8 +17,10 @@ import com.yujun.client.StockClient;
 import com.yujun.core.AccountService;
 import com.yujun.core.SettingService;
 import com.yujun.domain.Account;
+import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.Setting;
 import com.yujun.domain.StockDO;
+import com.yujun.service.Calculata;
 import com.yujun.util.ThreadLocalPool;
 
 @Controller
@@ -33,7 +35,8 @@ public class ScreenControll {
 	SettingService settingService;
 	@Autowired
 	AccountService accountService;
-	
+	@Autowired
+	Calculata calculata;
 	private static String ACCOUNT ="accountId";
 	@RequestMapping("/")  
 	public String root(Map<String, Object> mode,HttpSession session){ 
@@ -82,11 +85,17 @@ public class ScreenControll {
 		StockDO stockDO  = client.queryStockDO(accountId,zqCode).get(0);
 		model.put("stock",stockDO);  
 		model.put("orders",client.queryDelegate(accountId,zqCode)); 
-		model.put("price",	ThreadLocalPool.getStringBuf().toString());  
 		Setting set = settingService.getUserConfig(accountId,zqCode);
 		if(set!=null) {
 			model.put("status",	set.getStatus()==0 ? "关闭":"开启");
 		}
+		
+		List<StockDO> holdings= client.queryStockDO(accountId, zqCode);
+		OnlinePriceDO online 	= client.queryMarket(set.getUserId(), set.getCode());
+		calculata.getTradeOrder(set.getType(),set.buildStockDO(),holdings.get(0), online,new Float(set.getRate()).intValue());
+		
+		model.put("price",	ThreadLocalPool.getStringBuf().toString());  
+		
 	    return "detail";  
 	}
 	
