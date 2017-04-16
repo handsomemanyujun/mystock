@@ -31,11 +31,13 @@ public class TradeSchedule {
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {
-			if (!isTest && DateUtil.isOpenTradeTime()) {
-				if(DateUtil.needCancelOrder()) {	// 收市前最后一分钟，测单
-					cancle();
-				} else {
-					orders();
+			if (!isTest) {
+				if(DateUtil.isOpenTradeTime()) {
+					if(DateUtil.needCancelOrder()) {	// 收市前最后一分钟，测单
+						cancle();
+					} else {
+						orders();
+					}
 				}
 			} else {
 				orders();
