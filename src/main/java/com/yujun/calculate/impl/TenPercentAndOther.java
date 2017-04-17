@@ -210,7 +210,7 @@ public class TenPercentAndOther implements TradeOrder {
 	}
 	
 	public long[][] calStockRegion(StockDO initStock) {
-		long[][]  priceRegion = new long[50][2];
+		long[][]  priceRegion = new long[70][2];
 		Money startPrcie = initStock.getAvaPrice().multiply(1.124);
 		Money startMoney = initStock.getTotalValue().multiply(0.8);
 		
@@ -232,7 +232,7 @@ public class TenPercentAndOther implements TradeOrder {
 		
 		priceRegion[11][0] = startPrcie.getCent();
 		priceRegion[11][1] = priceRegion[10][1] + MathUtil.getCount(startPrcie, startMoney.multiply(0.04));
-		for(int i = 6 ; i < 40 ; i++) {
+		for(int i = 6 ; i < 60 ; i++) {
 			Money buyPrice  = startPrcie.multiply(0.99 - 0.01*(i-6));
 			double rate = (float)(i/5+1)*0.02;
 			long num = MathUtil.getCount(buyPrice, startMoney.multiply(rate));

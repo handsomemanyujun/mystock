@@ -27,7 +27,7 @@ public class TradeSchedule {
 	Calculata calculata;
 	@Autowired
 	AccountService accountService;
-	boolean isTest = false;
+	boolean isTest = true;
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {
@@ -38,6 +38,8 @@ public class TradeSchedule {
 					} else {
 						orders();
 					}
+				}else {
+					log.info("not a trade time witting");
 				}
 			} else {
 				orders();
@@ -97,7 +99,7 @@ public class TradeSchedule {
 						orderDO.setBuy(true);
 						orderDO.setPrice(target.getAvaPrice());
 						orderDO.setZqCode(zqCode);
-						if (!isTest) {
+						if (isTest) {
 							stockClient.crateOrder(setting.getUserId(), orderDO);
 						}
 					}
@@ -117,7 +119,7 @@ public class TradeSchedule {
 						orderDO.setBuy(false);
 						orderDO.setPrice(target.getAvaPrice());
 						orderDO.setZqCode(zqCode);
-						if (!isTest) {
+						if (isTest) {
 							stockClient.crateOrder(setting.getUserId(), orderDO);
 						}
 					}

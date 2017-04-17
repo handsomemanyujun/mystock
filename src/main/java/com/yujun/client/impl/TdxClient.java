@@ -1,8 +1,9 @@
 package com.yujun.client.impl;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
@@ -270,18 +271,23 @@ public class TdxClient implements StockClient{
 	private boolean canOrder(String userId,boolean isBuy, String zqdm){
 		int sum =0;
 		List<OrderDO> list = queryDelegate(userId,zqdm);
+		Set<String> set  = new HashSet<String>();
 		for(OrderDO orderDO: list) {
+			String key = ""+orderDO.getPrice()+orderDO.isBuy();
 			if(orderDO.getStatus() == OrderDO.SUCCESS) {
+				if(set.contains(key)) continue;
 				if(orderDO.isBuy()) {
 					sum ++;
 				} else {
 					sum --;
 				}
 			}
+			set.add(key);
 		}
 		
 		sum += isBuy? 1:-1;
 		
+		//return false;
 		return Math.abs(sum) <=2;
 	}
 	
@@ -320,7 +326,8 @@ public class TdxClient implements StockClient{
 		// 无论用什么语言编程，都必须仔细阅读VC版内的关于DLL导出函数的功能和参数含义说明，不仔细阅读完就提出问题者因时间精力所限，恕不解答。
 		//String root = this.getClass().getResource(".");
 		//File file = new File(root);
-		tdxLibrary = (TdxLibrary) Native.loadLibrary("D:\\source\\mystockmvn\\trade", TdxLibrary.class);
+		//tdxLibrary = (TdxLibrary) Native.loadLibrary("D:\\source\\mystockmvn\\trade", TdxLibrary.class);
+		tdxLibrary = (TdxLibrary) Native.loadLibrary("trade", TdxLibrary.class);
 		tdxLibrary.OpenTdx();
 		this.gddm = gddm.split(",");
 		// 登录
