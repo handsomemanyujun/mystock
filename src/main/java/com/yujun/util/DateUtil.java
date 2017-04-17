@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 public class DateUtil {
-	public static Calendar cal = Calendar.getInstance();//ʹ��Ĭ��ʱ�������Ի������һ�������� 
+	public static Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。 
 	public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");  
-	public static boolean isOpenTradeTime() {
+	public static boolean isOpenTradeTime() throws Exception{
 		Calendar open = Calendar.getInstance();
 		open.set(Calendar.HOUR_OF_DAY, 9);
 		open.set(Calendar.MINUTE,15);
@@ -27,12 +27,8 @@ public class DateUtil {
 		
 		Date now = new Date();
 		for (Date noTradeDay : noTradeDays) {
-			try {
-				if (daysBetween(now,noTradeDay) ==0) {
-					return false;
-				}
-			} catch (ParseException e) {
-				throw new RuntimeException(e);
+			if (daysBetween(now,noTradeDay) ==0) {
+				return false;
 			}
 		}
 		return now.after(open.getTime()) && now.before(close.getTime());
@@ -40,7 +36,7 @@ public class DateUtil {
 	}
 	
 	/**
-	 * �Ƿ�������ǰ���һ����
+	 * 是否是收盘前最后一分钟
 	 * @return
 	 */
 	public static boolean needCancelOrder() {
@@ -60,17 +56,22 @@ public class DateUtil {
 	private static  List<Date> noTradeDays = new ArrayList<Date>();
 	static {
 		try {
-			noTradeDays.add(dateFormat.parse("2016/05/02"));
-			noTradeDays.add(dateFormat.parse("2016/06/09"));
-			noTradeDays.add(dateFormat.parse("2016/06/10"));
-			noTradeDays.add(dateFormat.parse("2016/09/15"));
-			noTradeDays.add(dateFormat.parse("2016/09/16"));
-			noTradeDays.add(dateFormat.parse("2016/09/18"));
-			noTradeDays.add(dateFormat.parse("2016/10/03"));
-			noTradeDays.add(dateFormat.parse("2016/10/04"));
-			noTradeDays.add(dateFormat.parse("2016/10/05"));
-			noTradeDays.add(dateFormat.parse("2016/10/06"));
-			noTradeDays.add(dateFormat.parse("2016/10/07"));
+			noTradeDays.add(dateFormat.parse("2017/01/27"));
+			noTradeDays.add(dateFormat.parse("2017/01/30"));
+			noTradeDays.add(dateFormat.parse("2017/01/31"));
+			noTradeDays.add(dateFormat.parse("2017/02/01"));
+			noTradeDays.add(dateFormat.parse("2017/02/02"));
+			noTradeDays.add(dateFormat.parse("2017/04/03"));
+			noTradeDays.add(dateFormat.parse("2017/04/04"));
+			noTradeDays.add(dateFormat.parse("2017/05/01"));
+			noTradeDays.add(dateFormat.parse("2017/05/29"));
+			noTradeDays.add(dateFormat.parse("2017/05/30"));
+			noTradeDays.add(dateFormat.parse("2017/10/02"));
+			noTradeDays.add(dateFormat.parse("2017/10/03"));
+			noTradeDays.add(dateFormat.parse("2017/10/04"));
+			noTradeDays.add(dateFormat.parse("2017/10/05"));
+			noTradeDays.add(dateFormat.parse("2017/10/06"));
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +93,7 @@ public class DateUtil {
 	 
 	 public static Date addDay(Date date , int day) {
 		 cal.setTime(date); 
-		 cal.add(Calendar.DATE, day);//ȡ��ǰ���ڵ�ǰһ��.  
+		 cal.add(Calendar.DATE, day);//取当前日期的前一天.  
 		 return cal.getTime();
 	 }
 }
