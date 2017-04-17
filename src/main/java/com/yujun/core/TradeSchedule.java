@@ -27,7 +27,7 @@ public class TradeSchedule {
 	Calculata calculata;
 	@Autowired
 	AccountService accountService;
-	boolean isTest = true;
+	boolean isTest = false;
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {

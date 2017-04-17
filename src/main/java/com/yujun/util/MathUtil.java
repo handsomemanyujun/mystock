@@ -3,10 +3,10 @@ package com.yujun.util;
 
 public class MathUtil {
 	/* **
-	 * µÃµ½½«ÒªÂòÈëµÄ¹ÉÆ±ÊıÁ¿
+	 * å¾—åˆ°å°†è¦ä¹°å…¥çš„è‚¡ç¥¨æ•°é‡
 	 */
 	public static int getCount(Money price, Money total) {
-		//ËÄÉáÎåÈë£¬ÒÔ100×öÒ»¸öµ¥Î»Êä³ö
+		//å››èˆäº”å…¥ï¼Œä»¥100åšä¸€ä¸ªå•ä½è¾“å‡º
 		return  Math.round((total.getCent()/(float)(price.getCent() * 100)))*100;
 	}
 }

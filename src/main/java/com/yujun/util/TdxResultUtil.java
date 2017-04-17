@@ -6,11 +6,17 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.util.StringUtils;
 
 import com.yujun.domain.PriceDO;
 
 public class TdxResultUtil {
+	static Map<String,Map<String,List<PriceDO>>> datePricemap = new HashMap<String,Map<String,List<PriceDO>>>();
 	public static String[][] parseStr(String result){
 		if(result !=null) {
 			String[] lines	 = result.split("\n");
@@ -131,7 +137,7 @@ public class TdxResultUtil {
 				offlinePriceDO.setLowestPrice(new Money((long)byteArrayToInt(buf,12,16)));
 				offlinePriceDO.setClosingPrice(new Money((long)byteArrayToInt(buf,16,20)));
 				list.add(offlinePriceDO);
-				buf = new byte[32];// ÖØĞÂÉú³É£¬±ÜÃâºÍÉÏ´Î¶ÁÈ¡µÄÊı¾İÖØ¸´
+				buf = new byte[32];// é‡æ–°ç”Ÿæˆï¼Œé¿å…å’Œä¸Šæ¬¡è¯»å–çš„æ•°æ®é‡å¤
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -139,8 +145,51 @@ public class TdxResultUtil {
 		return list;
 	}
 	
+	public static List<PriceDO> parseDaylineByWeb(String zqcode) {
+		List<PriceDO> list = new ArrayList<PriceDO>();
+		DateFormat format =  new java.text.SimpleDateFormat("yyyy-MM-dd");
+		String nowDay =format.format(new Date());
+		Map<String,List<PriceDO>> nowMap;
+		if(datePricemap.containsKey(nowDay)){
+			nowMap = datePricemap.get(nowDay);
+		} else {
+			datePricemap.clear();
+			nowMap = new HashMap<String,List<PriceDO>>();
+		}
+		if(nowMap.containsKey(zqcode)){
+			return nowMap.get(zqcode);
+		}
+		try {
+			String path;
+			if (TdxResultUtil.isSHCode(zqcode)) {
+				path = "http://table.finance.yahoo.com/table.csv?s="+zqcode+".ss";
+			} else {
+				path = "http://table.finance.yahoo.com/table.csv?s="+zqcode+".sz";
+			}
+			BufferedReader reader =  HttpClient.getRead(path);
+			
+			String line = reader.readLine();
+			while (!StringUtils.isEmpty(line=reader.readLine())) {
+				String[] item = line.split(",");
+				PriceDO offlinePriceDO= new PriceDO();
+				offlinePriceDO.setDate(format.parse(item[0]));
+				offlinePriceDO.setOpenPrice(new Money(item[1]));
+				offlinePriceDO.setHighestPrice(new Money(item[2]));
+				offlinePriceDO.setLowestPrice(new Money(item[3]));
+				offlinePriceDO.setClosingPrice(new Money(item[4]));
+				list.add(offlinePriceDO);
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		nowMap.put(zqcode, list);
+		datePricemap.put(nowDay, nowMap);
+		return list;
+	}
+	
 	public static void main(String[] args) {
-		List<PriceDO>  list = parseDayline("601012");
+		List<PriceDO>  list = parseDaylineByWeb("601012");
 		for(PriceDO price: list) {
 			System.out.println(price);
 		}

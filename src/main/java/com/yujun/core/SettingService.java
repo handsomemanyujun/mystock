@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +14,6 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -31,8 +29,7 @@ import com.yujun.domain.Setting;
 public class SettingService {
 	Logger logger=LoggerFactory.getLogger(SettingService.class);
 	private Map<String, Map<String,Setting>> settings = new HashMap<String, Map<String,Setting>>();
-	Resource re = new ClassPathResource("stock_setting.db");
-	
+	URL db = this.getClass().getResource("/stock_setting.db");
 	public Map<String, Map<String,Setting>> getAllUserSetting() throws Exception{
 		if(settings == null) {
 			initConfig();	
@@ -57,7 +54,7 @@ public class SettingService {
 		try {
 			StringBuffer buf = new StringBuffer();
 			BufferedReader br;
-			br = new BufferedReader(new InputStreamReader(re.getInputStream()));
+			br = new BufferedReader(new InputStreamReader(db.openStream()));
 
 			String line = "";
 			while ((line = br.readLine()) != null) {
@@ -104,8 +101,7 @@ public class SettingService {
 					list.add(it);
 				}
 			}
-			BufferedWriter br = new BufferedWriter(new FileWriter(re.getFile(),false));
-			re.getFile().getAbsoluteFile();
+			BufferedWriter br = new BufferedWriter(new FileWriter(db.getFile(),false));
 			br.write(JSONObject.toJSONString(list));
 			br.flush(); //刷新缓冲区的数据到文件
 			br.close();

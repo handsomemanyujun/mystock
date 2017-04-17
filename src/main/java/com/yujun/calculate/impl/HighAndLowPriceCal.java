@@ -175,7 +175,7 @@ public class HighAndLowPriceCal implements TradeOrder{
 			/*if(daylineMap.containsKey(zqCode)) {
 			    list = daylineMap.get(zqCode);
 			} else {*/
-				list = TdxResultUtil.parseDayline(zqCode);
+				list = TdxResultUtil.parseDaylineByWeb(zqCode);
 				//daylineMap.put(zqCode, list);
 			//}
 			int[] price = new int[7];

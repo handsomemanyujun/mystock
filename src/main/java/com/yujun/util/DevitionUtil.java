@@ -4,7 +4,7 @@ import java.util.List;
 
 public class DevitionUtil {
 	
-	 //«@È¡Æ½¾ùÖµ
+	 //ç²å–å¹³å‡å€¼
     public static double getAverage(int[] price){
         int sum = 0;
         for(int i = 0;i < price.length;i++){
@@ -13,7 +13,7 @@ public class DevitionUtil {
         return (double)(sum / (price.length));
     }
     
-    //É¾³ı×î¸ß×îµÍÖµ·¨
+    //åˆ é™¤æœ€é«˜æœ€ä½å€¼æ³•
     public static double getAverageOther(int[] price){
         int sum = 0;
         int lowest = price[0];
@@ -27,7 +27,7 @@ public class DevitionUtil {
         return (double)((sum - lowest - highest)/ (price.length-2));
     }
     
-    //Ä©ÈÕ¼ÓÈ¨Æ½¾ù·¨
+    //æœ«æ—¥åŠ æƒå¹³å‡æ³•
     public static double endWeightedAverage(int[] price){
         int sum = 0;
         for(int i = 1 ;i <price.length;i++){
@@ -37,7 +37,7 @@ public class DevitionUtil {
         return (double)(sum / (price.length+1));
     }
     
-    //½×Ìİ¼ÓÈ¨Æ½¾ù·¨
+    //é˜¶æ¢¯åŠ æƒå¹³å‡æ³•
     public static double jieTiAverage(int[] price){
         int sum = 0;
         int count = 0;
@@ -48,7 +48,7 @@ public class DevitionUtil {
         return (sum+0.0d) /count;
     }
    
-    //«@È¡˜ËœÊ²î
+    //ç²å–æ¨™æº–å·®
     public static double getStandardDevition(int[] price){
         double sum = 0;
         for(int i = 0;i < price.length;i++){
