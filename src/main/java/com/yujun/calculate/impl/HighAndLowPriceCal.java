@@ -12,14 +12,14 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.yujun.calculate.HoldingStockCal;
-import com.yujun.calculate.TradeOrder;
+import com.yujun.calculate.OrderCalculate;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.PriceDO;
 import com.yujun.domain.StockDO;
 import com.yujun.util.DevitionUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
-import com.yujun.util.ThreadLocalPool;
+import com.yujun.util.ZooCache;
 
 /**
  * 上下区间买入卖出算法
@@ -27,7 +27,7 @@ import com.yujun.util.ThreadLocalPool;
  *
  */
 @Component
-public class HighAndLowPriceCal implements TradeOrder{
+public class HighAndLowPriceCal implements OrderCalculate{
 	Logger log = Logger.getLogger(this.getClass());
 	ThreadLocal<StringBuffer> buf = new ThreadLocal<StringBuffer>();
 	HoldingStockCal holdingStockCal = new HoldingStockCal();
@@ -57,21 +57,15 @@ public class HighAndLowPriceCal implements TradeOrder{
 		
 		result.put("low", low);
 		result.put("high", high);
-		String tempStr;
+		String tempStr ="";
 		if(high!=null) {
-			tempStr = "最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount();
-			log.info(tempStr);
-			ThreadLocalPool.getStringBuf().append(tempStr);
+			tempStr += "最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount();
 		} else {
-			tempStr = "最终价格区间上限超出计算范围，请手动计算";
-			log.info(tempStr);
-			ThreadLocalPool.getStringBuf().append(tempStr);
+			tempStr += "最终价格区间上限超出计算范围，请手动计算";
 		}
 		
-		tempStr = "最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount();
+		tempStr += "最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount();
 		log.info(tempStr);
-		ThreadLocalPool.getStringBuf().append(tempStr);
-		
 		/*if(online.getNowPrice().greaterThan(hoding.getAvaPrice())){
 			log.info("当前价格超过成本线价格， 不作操作");
 		}*/

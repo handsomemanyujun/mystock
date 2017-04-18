@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
-import com.yujun.calculate.TradeOrder;
+import com.yujun.calculate.OrderCalculate;
 import com.yujun.calculate.impl.HighAndLowPriceCal;
 import com.yujun.calculate.impl.TenPercentAndOther;
 import com.yujun.domain.OnlinePriceDO;
@@ -15,7 +15,7 @@ import com.yujun.domain.StockDO;
 
 @Service
 public class Calculata {
-	private static Map<Integer, TradeOrder> cal;
+	private static Map<Integer, OrderCalculate> cal;
 	
 	@PostConstruct
 	public void init() {

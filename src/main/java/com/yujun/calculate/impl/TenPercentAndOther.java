@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.yujun.calculate.TradeOrder;
+import com.yujun.calculate.OrderCalculate;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.PriceDO;
 import com.yujun.domain.StockDO;
@@ -18,9 +18,8 @@ import com.yujun.util.DevitionUtil;
 import com.yujun.util.MathUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
-import com.yujun.util.ThreadLocalPool;
 @Component
-public class TenPercentAndOther implements TradeOrder {
+public class TenPercentAndOther implements OrderCalculate {
 	Logger log = Logger.getLogger(this.getClass());
 	@Override
 	public Map<String,StockDO> calculate(StockDO initStockDO, StockDO hoding, OnlinePriceDO online,int miniRange) {
@@ -53,16 +52,13 @@ public class TenPercentAndOther implements TradeOrder {
 		if(high!=null) {
 			tempStr = "最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount();
 			log.info(tempStr);
-			ThreadLocalPool.getStringBuf().append(tempStr);
 		} else {
 			tempStr = "最终价格区间上限超出计算范围，请手动计算";
 			log.info(tempStr);
-			ThreadLocalPool.getStringBuf().append(tempStr);
 		}
 		
 		tempStr = "最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount();
 		log.info(tempStr);
-		ThreadLocalPool.getStringBuf().append(tempStr);
 		
 		/*if(online.getNowPrice().greaterThan(hoding.getAvaPrice())){
 			log.info("当前价格超过成本线价格， 不作操作");
@@ -252,7 +248,6 @@ public class TenPercentAndOther implements TradeOrder {
 			}
 		}
 		log.info(initStock.getZqCode() +",的1%波段区间是" + buffer.toString());
-		ThreadLocalPool.getStringBuf().append(initStock.getZqCode() +",的1%波段区间\n" + buffer.toString());
 		return priceRegion;
 	}
 

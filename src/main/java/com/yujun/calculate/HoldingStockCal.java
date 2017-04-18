@@ -4,21 +4,21 @@ import org.apache.log4j.Logger;
 
 import com.yujun.domain.StockDO;
 import com.yujun.util.Money;
-import com.yujun.util.ThreadLocalPool;
 
 /**
- * ¼ÆËãÓ¦³ÖÓĞµÄ¹ÉÆ±ÊıÁ¿
+ * è®¡ç®—åº”æŒæœ‰çš„è‚¡ç¥¨æ•°é‡
  * @author yujun
  *
  */
 public class HoldingStockCal {
 	Logger log = Logger.getLogger(this.getClass());
+	
 	public long[][] calStockRegion(StockDO initStock) {
 		long[][]  priceRegion = new long[70][2];
 		
 		StringBuffer buffer = new StringBuffer();
 		int sum = (int)initStock.getAmount();
-		for(int i = 0 ; i < 5 ; i++) {	// Ó¯Àû×´Ì¬
+		for(int i = 0 ; i < 5 ; i++) {	// ç›ˆåˆ©çŠ¶æ€
 			Money buyPrice 		= initStock.getAvaPrice().multiply(1.01+ 0.01*i);
 			long count = Math.round((initStock.getTotalValue().getCent() * 0.1f) / buyPrice.getCent());
 			sum-=count;
@@ -43,8 +43,7 @@ public class HoldingStockCal {
 				buffer.append("\n");
 			}
 		}
-		log.info(initStock.getZqCode() +",µÄ1%²¨¶ÎÇø¼ä\n" + buffer.toString());
-		ThreadLocalPool.getStringBuf().append(initStock.getZqCode() +",µÄ1%²¨¶ÎÇø¼ä\n" + buffer.toString());
+		log.info(initStock.getZqCode() +",çš„1%æ³¢æ®µåŒºé—´\n" + buffer.toString());
 		return priceRegion;
 	}
 	

@@ -142,6 +142,7 @@ public class TdxClient implements StockClient{
 					continue;
 				}
 				StockDO stockDO = new StockDO();
+				stockDO.setUserId(userId);
 				stockDO.setZqCode(items[i][0]);
 				stockDO.setZqName(items[i][1]);
 				Float amout = Float.parseFloat(items[i][2]);

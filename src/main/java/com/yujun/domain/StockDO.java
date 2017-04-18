@@ -7,6 +7,7 @@ public class StockDO {
 	private String zqName;	//证券名称
 	private long amount; // 股票数量
 	private Money avaPrice; // 成本价格
+	private String userId;
 	
 	private long salesAmount; // 可卖数量
 	private Money nowPrice;	//当前价
@@ -82,6 +83,12 @@ public class StockDO {
 	}
 	public void setFloatRate(long floatRate) {
 		this.floatRate = floatRate;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public String toString() {
 		return "zqCode : " + zqCode + ",zqName : " + zqName + ",amount : " + amount

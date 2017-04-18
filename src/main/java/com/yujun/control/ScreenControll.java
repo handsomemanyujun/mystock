@@ -1,18 +1,25 @@
 package com.yujun.control;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.WebApplicationContext;
 
-import com.yujun.calculate.TradeOrder;
+import com.yujun.calculate.OrderCalculate;
 import com.yujun.client.StockClient;
 import com.yujun.core.AccountService;
 import com.yujun.core.SettingService;
@@ -21,16 +28,18 @@ import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.Setting;
 import com.yujun.domain.StockDO;
 import com.yujun.service.Calculata;
-import com.yujun.util.ThreadLocalPool;
 
 @Controller
 public class ScreenControll {
+	Logger logger=LoggerFactory.getLogger(ScreenControll.class);
+	@Autowired
+	WebApplicationContext webApplicationContext;
 	@Autowired
 	StockClient client;
 	@Autowired 
 	SettingService stockService;
 	@Autowired
-	TradeOrder highAndLowPriceCal;
+	OrderCalculate highAndLowPriceCal;
 	@Autowired
 	SettingService settingService;
 	@Autowired
@@ -93,12 +102,29 @@ public class ScreenControll {
 		List<StockDO> holdings= client.queryStockDO(accountId, zqCode);
 		OnlinePriceDO online 	= client.queryMarket(set.getUserId(), set.getCode());
 		calculata.getTradeOrder(set.getType(),set.buildStockDO(),holdings.get(0), online,new Float(set.getRate()).intValue());
-		
-		model.put("price",	ThreadLocalPool.getStringBuf().toString());  
-		
+	
 	    return "detail";  
 	}
 	
+	@RequestMapping(value="/log")
+	public String log(Map<String, Object> model,@RequestParam(value="size", defaultValue="1000") int size) {
+		try {
+			Resource  re = webApplicationContext.getResource("info.log");
+			StringBuffer buf = new StringBuffer();
+			BufferedReader br = new BufferedReader(new InputStreamReader(re.getInputStream()));
+
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				buf.append(line+"</br>");
+			}
+			
+			br.close();
+			model.put("price",	buf.substring(Math.max(0, buf.length()-size),buf.length()));  
+		} catch (Exception e) {
+			logger.error("fetch info.log error.", e);
+		}	
+		return "log";  
+	}
 	/**
 	 * 被监控股票配置列表
 	 * @param action
