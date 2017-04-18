@@ -1,0 +1,10 @@
+#parse("layout/head.vm")
+
+<div class="container">
+	<div class="row">
+	    <div class="input-group">
+	       $price
+	  </div>
+</div>
+ </div>
+#parse("layout/foot.vm")
