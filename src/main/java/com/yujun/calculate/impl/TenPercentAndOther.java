@@ -169,11 +169,14 @@ public class TenPercentAndOther implements TradeOrder {
 			//}
 			int[] price = new int[7];
 			String priceStr ="";
-			for (int i = 1; i <= price.length; i++) {
-				PriceDO beYestday = list.get(list.size() - 1 - i);
-				PriceDO yestday = list.get(list.size() - i);
-				price[i-1] = (int)(Math.max(Math.abs(yestday.getHighestPrice().getCent()-beYestday.getClosingPrice().getCent()),Math.abs(yestday.getLowestPrice().getCent()-beYestday.getClosingPrice().getCent())));
-				priceStr +="[" +yestday.getDateStr() +"," +price[i-1]+"]";
+			for (int i = 0; i < price.length; i++) {
+				PriceDO beYestday = list.get(i + 1);
+				PriceDO yestday = list.get(i);
+				price[i] = (int) (Math.max(
+						Math.abs(yestday.getHighestPrice().getCent() - beYestday.getClosingPrice().getCent()),
+						Math.abs(yestday.getLowestPrice().getCent() - beYestday.getClosingPrice().getCent())));
+				priceStr += "[" + yestday.getDateStr() + "," + price[i]
+						+ "]";
 			}
 			
 			/*for (int i = 0; i < list.size(); i++) {
