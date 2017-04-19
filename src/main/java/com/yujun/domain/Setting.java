@@ -61,6 +61,7 @@ public class Setting {
 	public StockDO buildStockDO(){
 		StockDO stockDO = new StockDO();
 		stockDO.setZqCode(this.code);
+		stockDO.setZqName(this.name);
 		stockDO.setAmount(this.amount);
 		stockDO.setAvaPrice(new Money(this.price));
 		return stockDO;

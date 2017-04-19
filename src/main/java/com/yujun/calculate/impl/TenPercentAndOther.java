@@ -15,18 +15,18 @@ import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.PriceDO;
 import com.yujun.domain.StockDO;
 import com.yujun.util.DevitionUtil;
+import com.yujun.util.LogUtil;
 import com.yujun.util.MathUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
 @Component
 public class TenPercentAndOther implements OrderCalculate {
-	Logger log = Logger.getLogger(this.getClass());
 	@Override
 	public Map<String,StockDO> calculate(StockDO initStockDO, StockDO hoding, OnlinePriceDO online,int miniRange) {
-		long[][] priceRegion 	= calStockRegion(initStockDO);
+		long[][] priceRegion 	= calStockRegion(hoding.getUserId(), initStockDO);
 		Map<String,StockDO> result = new HashMap<String,StockDO>();
-		StockDO[] byAmont = priceRegionByAmont(priceRegion,hoding,miniRange);
-		StockDO[] byPrice = priceRegionByPrice(priceRegion,online);
+		StockDO[] byAmont = priceRegionByAmont(hoding.getUserId(), priceRegion, hoding, miniRange);
+		StockDO[] byPrice = priceRegionByPrice(hoding.getUserId(), priceRegion, online);
 		
 		StockDO low = null;
 		StockDO high = null;
@@ -51,14 +51,11 @@ public class TenPercentAndOther implements OrderCalculate {
 		String tempStr=null;
 		if(high!=null) {
 			tempStr = "最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount();
-			log.info(tempStr);
 		} else {
 			tempStr = "最终价格区间上限超出计算范围，请手动计算";
-			log.info(tempStr);
 		}
-		
-		tempStr = "最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount();
-		log.info(tempStr);
+		LogUtil.log(hoding.getUserId() ,tempStr);
+		LogUtil.log(hoding.getUserId() ,"最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
 		
 		/*if(online.getNowPrice().greaterThan(hoding.getAvaPrice())){
 			log.info("当前价格超过成本线价格， 不作操作");
@@ -66,23 +63,23 @@ public class TenPercentAndOther implements OrderCalculate {
 		return result;
 	}
 	
-	public StockDO[] priceRegionByAmont(long[][] priceRegion , StockDO hoding,int miniRange) {
+	public StockDO[] priceRegionByAmont(String userId, long[][] priceRegion , StockDO hoding,int miniRange) {
 		StockDO low = null;
 		StockDO high = null;
 		
 		
 		int  index =-1;
-		log.info("按照当前持股数是" + hoding.getAmount());
+		LogUtil.log(hoding.getUserId() ,"按照当前持股数是" + hoding.getAmount());
 		for(int i = 0 ; i<priceRegion.length  ;i++){
 			if(hoding.getAmount() <= priceRegion[i][1]) {
 				index = i ;
-				log.info("选择到的区间是" + priceRegion[i][0] +":" +priceRegion[i][1] );
+				LogUtil.log(hoding.getUserId() ,"选择到的区间是" + priceRegion[i][0] +":" +priceRegion[i][1]);
 				break;
 			}
 		}
 		
 	
-		long standard = rangeOfPrice(hoding.getZqCode());	
+		long standard = rangeOfPrice(userId,hoding.getZqCode());	
 		if(index >= miniRange-1) {
 			long highest = Math.max(priceRegion[index][0] + standard,priceRegion[index-miniRange][0]);
 			for(int i = miniRange ; i<priceRegion.length  ;i++){
@@ -95,9 +92,9 @@ public class TenPercentAndOther implements OrderCalculate {
 				} 
 			}
 			if(high==null) {
-				log.info("超出计算范围，最高价格是" + highest);
+				LogUtil.log(hoding.getUserId() ,"超出计算范围，最高价格是" + highest);
 			} else {
-				log.info("按持股数计算出的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
+				LogUtil.log(hoding.getUserId() ,"按持股数计算出的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
 			}
 			
 			 
@@ -112,9 +109,9 @@ public class TenPercentAndOther implements OrderCalculate {
 				}
 			}
 			if(low==null) {
-				log.info("超出计算范围，最低价格是" + highest);
+				LogUtil.log(hoding.getUserId() ,"超出计算范围，最低价格是" + lowest);
 			} else {
-				log.info("按持股数计算出的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
+				LogUtil.log(hoding.getUserId() ,"按持股数计算出的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
 			}
 		}
 		
@@ -125,7 +122,7 @@ public class TenPercentAndOther implements OrderCalculate {
 		return result;
 	}
 	
-	public StockDO[] priceRegionByPrice(long[][] priceRegion ,OnlinePriceDO online ) {
+	public StockDO[] priceRegionByPrice(String userId, long[][] priceRegion ,OnlinePriceDO online ) {
 		if(online.getNowPrice().getCent() <=0) {	
 			//还没开盘
 			return null;
@@ -141,9 +138,9 @@ public class TenPercentAndOther implements OrderCalculate {
 		}
 		
 		if(low!=null && high!=null) {
-			log.info("按照当前股票价格" + online.getNowPrice());
-			log.info("按价格计算的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
-			log.info("按价格计算的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
+			LogUtil.log(userId ,"按照当前股票价格" + online.getNowPrice());
+			LogUtil.log(userId ,"按价格计算的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
+			LogUtil.log(userId ,"按价格计算的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
 			
 			StockDO[] result = new StockDO[2];
 			result[0] = low;
@@ -154,7 +151,7 @@ public class TenPercentAndOther implements OrderCalculate {
 		return null;
 	}
 	
-	public long rangeOfPrice(String zqCode) {
+	public long rangeOfPrice(String userId, String zqCode) {
 		try {
 			List<PriceDO> list = null;
 			/*if(daylineMap.containsKey(zqCode)) {
@@ -189,9 +186,9 @@ public class TenPercentAndOther implements OrderCalculate {
 			
 			double average = DevitionUtil.getAverageOther(price);
 			double standard = DevitionUtil.getStandardDevition(price);
-			log.info("最近的几天的价格波动范围是" + priceStr);
-			log.info("波动加权算数平均值是" + average);
-			log.info("股票波动范围标准差是" + standard);
+			LogUtil.log(userId ,"最近的几天的价格波动范围是" + priceStr);
+			LogUtil.log(userId ,"波动加权算数平均值是" + average);
+			LogUtil.log(userId ,"股票波动范围标准差是" + standard);
 			
 			for (int i = 0; i < price.length; i++) {
 				PriceDO of1 = list.get(list.size() - 1 - i);
@@ -200,15 +197,14 @@ public class TenPercentAndOther implements OrderCalculate {
 				priceStr +=price[i]+",";
 			}
 			double priceStandard = DevitionUtil.getStandardDevition(price);
-			log.info("股票价格标准差是" + priceStandard);
-			
+			LogUtil.log(userId ,"股票价格标准差是" + priceStandard);
 			return (long)(average);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	public long[][] calStockRegion(StockDO initStock) {
+	public long[][] calStockRegion(String userId, StockDO initStock) {
 		long[][]  priceRegion = new long[70][2];
 		Money startPrcie = initStock.getAvaPrice().multiply(1.124);
 		Money startMoney = initStock.getTotalValue().multiply(0.8);
@@ -247,7 +243,7 @@ public class TenPercentAndOther implements OrderCalculate {
 				buffer.append("\n");
 			}
 		}
-		log.info(initStock.getZqCode() +",的1%波段区间是" + buffer.toString());
+		LogUtil.log(userId, initStock.getZqCode() +",的1%波段区间是" + buffer.toString());
 		return priceRegion;
 	}
 
@@ -257,9 +253,9 @@ public class TenPercentAndOther implements OrderCalculate {
 		StockDO stockDO= new StockDO();
 		stockDO.setAmount(10000);
 		stockDO.setAvaPrice(new Money(2339));
-		long[][] region = tenPercentAndOther.calStockRegion(stockDO);
+		/*long[][] region = tenPercentAndOther.calStockRegion(stockDO);
 		for(int i=0; i< region.length;i++) {
 			System.out.println(i +",[" + region[i][0] + ":" + region[i][1] +"]");
-		}
+		}*/
 	}
 }

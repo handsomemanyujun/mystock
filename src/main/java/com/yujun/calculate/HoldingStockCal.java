@@ -11,7 +11,6 @@ import com.yujun.util.Money;
  *
  */
 public class HoldingStockCal {
-	Logger log = Logger.getLogger(this.getClass());
 	
 	public long[][] calStockRegion(StockDO initStock) {
 		long[][]  priceRegion = new long[70][2];

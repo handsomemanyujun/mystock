@@ -15,10 +15,10 @@ import com.yujun.domain.Setting;
 import com.yujun.domain.StockDO;
 import com.yujun.service.Calculata;
 import com.yujun.util.DateUtil;
+import com.yujun.util.LogUtil;
 
 @Service
 public class TradeSchedule {
-	Logger log = Logger.getLogger(this.getClass());
 	@Autowired
 	StockClient stockClient;
 	@Autowired
@@ -39,18 +39,18 @@ public class TradeSchedule {
 						orders();
 					}
 				}else {
-					log.info("not a trade time witting");
+					LogUtil.log("not a trade time witting");
 				}
 			} else {
 				orders();
 			}
 		} catch(Exception e) {
-			log.info("error, schedul" ,e);
+			LogUtil.log("error, schedul",e);
 		}
 	}
 		
 	public void cancle() throws Exception {
-		log.info("\n\n开始撤单");
+		LogUtil.log("\n\n开始撤单");
 		for (Map<String, Setting> account : settingService.getAllUserSetting().values()) {
 			for (Setting setting : account.values()) { 
 				OrderDO orderDO = stockClient.haveDelegate(setting.getUserId(), true, setting.getCode());
@@ -64,7 +64,7 @@ public class TradeSchedule {
 				.values()) {
 			for (Setting setting : account.values()) {
 				if (accountService.getAccountByUserId(setting.getUserId()) == null) {
-					log.info("该账户不存在，" + setting.getUserId());
+					LogUtil.log(setting.getUserId(),"该账户不存在，" + setting.getUserId());
 					continue;
 				}
 
@@ -72,12 +72,12 @@ public class TradeSchedule {
 					continue;
 				}
 
-				log.info("\n\n开始进入自动下单程序：" + setting.getCode());
+				LogUtil.log(setting.getUserId(),"\n\n开始进入自动下单程序：" + setting.getCode());
 
 				String zqCode = setting.getCode();
 				List<StockDO> holdings = stockClient.queryStockDO(setting.getUserId(), setting.getCode());
 				if (holdings == null || holdings.size() == 0) {
-					log.info("该账户已经不持有这个股票，");
+					LogUtil.log(setting.getUserId(),"该账户已经不持有这个股票，");
 					continue;
 				}
 

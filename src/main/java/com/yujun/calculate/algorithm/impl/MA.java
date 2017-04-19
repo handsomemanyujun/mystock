@@ -8,10 +8,10 @@ import org.apache.log4j.Logger;
 import com.yujun.calculate.algorithm.Algorithm;
 import com.yujun.domain.PriceDO;
 import com.yujun.util.DateUtil;
+import com.yujun.util.LogUtil;
 import com.yujun.util.TdxResultUtil;
 
 public class MA implements Algorithm{
-	static Logger log = Logger.getLogger(MA.class);
 	 private final int day[] = {
 		        3, 10
 	};
@@ -36,7 +36,7 @@ public class MA implements Algorithm{
         for(int i = 0; i < day.length; i++) {
         	yestdayResult[i] = getAverage(data.subList(data.size() - day[i]-1, data.size()-1));
         }*/
-        log.info(result[0] + "->" +  result[1] +",");
+        LogUtil.log(result[0] + "->" +  result[1] +",");
         if(result[0] >= result[1] 
         		//&& yestdayResult[0] < yestdayResult[1]
         		) {
@@ -52,12 +52,12 @@ public class MA implements Algorithm{
 		return 0;
 	}
 	
-	//獲取平均值
+	//锟紷取平锟斤拷值
     public static float getAverage(List<PriceDO> price) {
         float sum = 0.0f;
         for(int i = 0;i < price.size();i++){
             sum += price.get(i).getClosingPrice().getCent();
-            log.info(price.get(i).getDateStr() +"==" +price.get(i).getClosingPrice().getCent());
+            LogUtil.log(price.get(i).getDateStr() +"==" +price.get(i).getClosingPrice().getCent());
         }
      
         return sum / price.size();
@@ -68,7 +68,7 @@ public class MA implements Algorithm{
 		Date date = new Date();
 		for(int i=1; i<100;i++) {
 			Date date11 = DateUtil.addDay(date, 0-i);
-			log.info(" "+ DateUtil.dateFormat.format(date11) +"," + ma.getTradeSignal("600750",date11));
+			LogUtil.log(" "+ DateUtil.dateFormat.format(date11) +"," + ma.getTradeSignal("600750",date11));
 		}
 		
 	}

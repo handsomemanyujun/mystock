@@ -8,7 +8,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.yujun.calculate.HoldingStockCal;
@@ -17,9 +16,9 @@ import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.PriceDO;
 import com.yujun.domain.StockDO;
 import com.yujun.util.DevitionUtil;
+import com.yujun.util.LogUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
-import com.yujun.util.ZooCache;
 
 /**
  * 上下区间买入卖出算法
@@ -28,14 +27,13 @@ import com.yujun.util.ZooCache;
  */
 @Component
 public class HighAndLowPriceCal implements OrderCalculate{
-	Logger log = Logger.getLogger(this.getClass());
 	ThreadLocal<StringBuffer> buf = new ThreadLocal<StringBuffer>();
 	HoldingStockCal holdingStockCal = new HoldingStockCal();
 	public Map<String,StockDO> calculate(StockDO initStockDO, StockDO hoding, OnlinePriceDO online,int range) {
 		long[][] priceRegion 	= holdingStockCal.calStockRegion(initStockDO);
 		Map<String,StockDO> result = new HashMap<String,StockDO>();
-		StockDO[] byAmont = priceRegionByAmont(priceRegion,hoding);
-		StockDO[] byPrice = priceRegionByPrice(priceRegion,online);
+		StockDO[] byAmont = priceRegionByAmont(hoding.getUserId(), priceRegion, hoding);
+		StockDO[] byPrice = priceRegionByPrice(hoding.getUserId(), priceRegion, online);
 		
 		StockDO low = null;
 		StockDO high = null;
@@ -65,26 +63,26 @@ public class HighAndLowPriceCal implements OrderCalculate{
 		}
 		
 		tempStr += "最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount();
-		log.info(tempStr);
+		LogUtil.log(hoding.getUserId(),tempStr);
 		/*if(online.getNowPrice().greaterThan(hoding.getAvaPrice())){
 			log.info("当前价格超过成本线价格， 不作操作");
 		}*/
 		return result;
 	}
 	
-	public StockDO[] priceRegionByAmont(long[][] priceRegion , StockDO hoding) {
+	public StockDO[] priceRegionByAmont(String userId, long[][] priceRegion , StockDO hoding) {
 		StockDO low = null;
 		StockDO high = null;
 		long highest=0;
 		long lowest =0;
-		long standard = rangeOfPrice(hoding.getZqCode());	
+		long standard = rangeOfPrice(userId, hoding.getZqCode());	
 		
 		int  index =-1;
-		log.info("按照当前持股数是" + hoding.getAmount());
+		LogUtil.log(hoding.getUserId(),"按照当前持股数是" + hoding.getAmount());
 		for(int i = 0 ; i<priceRegion.length  ;i++){
 			if(hoding.getAmount() <= priceRegion[i][1]) {
 				index = i ;
-				log.info("选择到的区间是" + priceRegion[i][0] +":" +priceRegion[i][1] );
+				LogUtil.log(hoding.getUserId(),"选择到的区间是" + priceRegion[i][0] +":" +priceRegion[i][1] );
 				break;
 			}
 		}
@@ -104,13 +102,13 @@ public class HighAndLowPriceCal implements OrderCalculate{
 					} else {
 						high = new StockDO(null,priceRegion[i][1],new Money(highest));
 					}
-					log.info("按持股数计算出的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
+					LogUtil.log(hoding.getUserId(),"按持股数计算出的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
 					break;
 				}
 			}
 			
 			if(high==null) {
-				log.info("超出计算范围，最高价格是" + highest);
+				LogUtil.log(hoding.getUserId(),"超出计算范围，最高价格是" + highest);
 			} 
 			
 			for (int i = priceRegion.length-1; i > 0; i--) {
@@ -122,7 +120,7 @@ public class HighAndLowPriceCal implements OrderCalculate{
 					} else {
 						low = new StockDO(null,priceRegion[i][1] ,new Money(lowest));
 					}
-					log.info("按持股数计算出的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
+					LogUtil.log(hoding.getUserId(),"按持股数计算出的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
 					break;
 				}
 			}
@@ -135,7 +133,7 @@ public class HighAndLowPriceCal implements OrderCalculate{
 		return result;
 	}
 	
-	public StockDO[] priceRegionByPrice(long[][] priceRegion ,OnlinePriceDO online) {
+	public StockDO[] priceRegionByPrice(String userId, long[][] priceRegion ,OnlinePriceDO online) {
 		if(online.getNowPrice().getCent() <=0) {	
 			//还没开盘
 			return null;
@@ -151,9 +149,9 @@ public class HighAndLowPriceCal implements OrderCalculate{
 		}
 		
 		if(low!=null && high!=null) {
-			log.info("按照当前股票价格" + online.getNowPrice());
-			log.info("按价格计算的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
-			log.info("按价格计算的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
+			LogUtil.log(userId ,"按照当前股票价格" + online.getNowPrice());
+			LogUtil.log(userId ,"按价格计算的价格区间上限是" + high.getAvaPrice() +":" + high.getAmount());
+			LogUtil.log(userId ,"按价格计算的价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
 			
 			StockDO[] result = new StockDO[2];
 			result[0] = low;
@@ -163,7 +161,7 @@ public class HighAndLowPriceCal implements OrderCalculate{
 		return null;
 	}
 	
-	public long rangeOfPrice(String zqCode) {
+	public long rangeOfPrice(String userId,String zqCode) {
 		try {
 			List<PriceDO> list = null;
 			/*if(daylineMap.containsKey(zqCode)) {
@@ -195,9 +193,9 @@ public class HighAndLowPriceCal implements OrderCalculate{
 			
 			double average = DevitionUtil.getAverageOther(price);
 			double standard = DevitionUtil.getStandardDevition(price);
-			log.info("最近的几天的价格波动范围是" + priceStr);
-			log.info("波动加权算数平均值是" + average);
-			log.info("股票波动范围标准差是" + standard);
+			LogUtil.log(userId ,"最近的几天的价格波动范围是" + priceStr);
+			LogUtil.log(userId ,"波动加权算数平均值是" + average);
+			LogUtil.log(userId ,"股票波动范围标准差是" + standard);
 			
 			for (int i = 0; i < price.length; i++) {
 				PriceDO of1 = list.get(list.size() - 1 - i);
@@ -206,8 +204,7 @@ public class HighAndLowPriceCal implements OrderCalculate{
 				priceStr +=price[i]+",";
 			}
 			double priceStandard = DevitionUtil.getStandardDevition(price);
-			log.info("股票价格标准差是" + priceStandard);
-			
+			LogUtil.log(userId ,"股票价格标准差是" + priceStandard);
 			return (long)(average);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

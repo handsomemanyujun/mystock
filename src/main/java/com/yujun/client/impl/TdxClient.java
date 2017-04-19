@@ -15,12 +15,12 @@ import com.yujun.domain.FundPoolDO;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.OrderDO;
 import com.yujun.domain.StockDO;
+import com.yujun.util.LogUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
 
 //@Component
 public class TdxClient implements StockClient{
-	Logger log = Logger.getLogger(this.getClass());
 	public interface TdxLibrary extends Library 
 	{
         //基本版函数
@@ -121,7 +121,7 @@ public class TdxClient implements StockClient{
 			fundPoolDO.setStockValue(new Money(items[1][6]));
 			
 		}
-		log.info(fundPoolDO);
+		LogUtil.log(userId, fundPoolDO.toString());
 		return fundPoolDO;
 	}
 	
@@ -156,11 +156,11 @@ public class TdxClient implements StockClient{
 				stockDO.setFloatValue(new Money(items[i][7]));
 				amout = Float.parseFloat(items[i][8]);
 				stockDO.setFloatRate(amout);
-				log.info("持有股票情况：" + stockDO);
+				LogUtil.log(userId, "持有股票情况：" + stockDO.toString());
 				list.add(stockDO);
 			}
 		}
-		log.info(list);
+		LogUtil.log(userId, list.toString());
 		return list;
 	}
 	/**
@@ -173,11 +173,11 @@ public class TdxClient implements StockClient{
 		List<OrderDO> list = queryDelegate(userId,zqdm);
 		for(OrderDO orderDO: list) {
 			if(orderDO.isBuy() == isBuy && (orderDO.getStatus() == OrderDO.WAITING || orderDO.getStatus() == OrderDO.PART_SUCCESS)) {
-				log.info("存在"+ (isBuy ?"买":"卖")+"委托单，委托单是： " + orderDO);
+				LogUtil.log(userId, "存在"+ (isBuy ?"买":"卖")+"委托单，委托单是： " + orderDO);
 				return orderDO;
 			}
 		}
-		log.info(zqdm +"目前不存在 "+(isBuy ?"买":"卖")+ "委托单");
+		LogUtil.log(userId, zqdm +"目前不存在 "+(isBuy ?"买":"卖")+ "委托单");
 		return null;
 	}
 	
@@ -246,7 +246,7 @@ public class TdxClient implements StockClient{
 			market.setNsPrice(new Money(items[1][3]));
 			market.setNowPrice(new Money(items[1][5]));
 		}
-		log.info("股票:" +market.getZqName()+ " ，当前的价格是" + market);
+		LogUtil.log(userId, "股票:" +market.getZqName()+ " ，当前的价格是" + market);
 		return market;
 	}
 	/**
@@ -254,7 +254,7 @@ public class TdxClient implements StockClient{
 	 * @param zqdm
 	 */
 	public void cancleOrder(String userId,OrderDO orderDO) {
-		log.info("放弃一个买订单" + orderDO);
+		LogUtil.log(userId, "放弃一个买订单" + orderDO);
 		if(TdxResultUtil.isSHCode(orderDO.getZqCode())) {	// 上证
 			tdxLibrary.CancelOrder(clientID, "1", orderDO.getOrderId(), result, errInfo);
 		} else {
@@ -301,15 +301,16 @@ public class TdxClient implements StockClient{
 	 */
 	public void crateOrder(String userId, OrderDO orderDO) {
 		if (!canOrder(userId,orderDO.isBuy(), orderDO.getZqCode())) {
-			log.info("当天该类型单已经成交超过两次，不在下单" + orderDO);
+			LogUtil.log(userId, "当天该类型单已经成交超过两次，不在下单" + orderDO);
 			return;
 		}
 		if (orderDO.getAmount() * orderDO.getPrice().getCent() < 20000 * 100) {
-			log.info("订单金额小于2w 不考虑买入." + orderDO);
+			LogUtil.log(userId, "订单金额小于2w 不考虑买入." + orderDO);
 			return;
 		}
 
-		log.info("下单，" + orderDO);
+		LogUtil.log(userId, "下单，" + orderDO);
+		
 		tdxLibrary.SendOrder(clientID, orderDO.isBuy() ? 0
 				: 1, 0, TdxResultUtil.isSHCode(orderDO.getZqCode()) ? gddm[0]
 				: gddm[1], orderDO.getZqCode(), Float.parseFloat(orderDO
@@ -338,7 +339,7 @@ public class TdxClient implements StockClient{
 			System.out.println(Native.toString(errInfo, "GBK"));
 			return false;
 		} 
-		log.error("AccountNo "+userId +"login sucess");
+		LogUtil.log(userId, "AccountNo "+userId +"login sucess");
 		cleanResult();
 		return true;
 	}

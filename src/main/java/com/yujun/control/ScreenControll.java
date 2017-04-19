@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,7 @@ import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.Setting;
 import com.yujun.domain.StockDO;
 import com.yujun.service.Calculata;
+import com.yujun.util.LogUtil;
 
 @Controller
 public class ScreenControll {
@@ -107,15 +109,26 @@ public class ScreenControll {
 	}
 	
 	@RequestMapping(value="/log")
-	public String log(Map<String, Object> model,@RequestParam(value="size", defaultValue="1000") int size) {
+	public String log(Map<String, Object> model,@RequestParam(value="size", defaultValue="10000") int size,HttpSession session) {
 		try {
+			String accountId=null;
+			if(session.getAttribute(ACCOUNT)!=null) {
+				accountId = ((String)session.getAttribute(ACCOUNT));
+			}
+			
 			Resource  re = webApplicationContext.getResource("info.log");
 			StringBuffer buf = new StringBuffer();
 			BufferedReader br = new BufferedReader(new InputStreamReader(re.getInputStream()));
 
 			String line = "";
 			while ((line = br.readLine()) != null) {
-				buf.append(line+"</br>");
+				if(StringUtils.isEmpty(accountId)) {
+					buf.append(line+"</br>");
+				} else {
+					if(line.contains(LogUtil.getSpFlag(accountId))) {
+						buf.append(LogUtil.trimSpString(accountId, line)+"</br>");
+					}
+				}
 			}
 			
 			br.close();
@@ -195,6 +208,18 @@ public class ScreenControll {
 		}
 		
 		return "redirect:home";
+	}
+	
+	/**
+	 * 登录
+	 * @param password
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value="/loginout",method= RequestMethod.GET)
+	public String login(HttpSession session) {
+		session.setAttribute(ACCOUNT, null);
+		return "redirect:login";
 	}
 	
 	@RequestMapping(value="/start",method= RequestMethod.POST)
