@@ -29,7 +29,7 @@ public class TenPercentAndOther implements OrderCalculate {
 		StockDO[] byPrice = priceRegionByPrice(hoding.getUserId(), priceRegion, online);
 		
 		StockDO low = null;
-		StockDO high = null;
+		StockDO high = null; 
 		
 		low  = byAmont[0];
 		high = byAmont[1];

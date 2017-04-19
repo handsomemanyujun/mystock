@@ -167,7 +167,7 @@ public class HighAndLowPriceCal implements OrderCalculate{
 			/*if(daylineMap.containsKey(zqCode)) {
 			    list = daylineMap.get(zqCode);
 			} else {*/
-				list = TdxResultUtil.parseDaylineByWeb(zqCode);
+				list = TdxResultUtil.parseDaylineByWeb(zqCode); 
 				//daylineMap.put(zqCode, list);
 			//}
 			int[] price = new int[7];
