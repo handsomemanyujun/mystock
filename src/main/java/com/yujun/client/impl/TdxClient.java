@@ -121,7 +121,7 @@ public class TdxClient implements StockClient{
 			fundPoolDO.setStockValue(new Money(items[1][6]));
 			
 		}
-		LogUtil.log(userId, fundPoolDO.toString());
+		LogUtil.log(userId, "持有资金情况" + fundPoolDO.toString());
 		return fundPoolDO;
 	}
 	
@@ -160,7 +160,6 @@ public class TdxClient implements StockClient{
 				list.add(stockDO);
 			}
 		}
-		LogUtil.log(userId, list.toString());
 		return list;
 	}
 	/**

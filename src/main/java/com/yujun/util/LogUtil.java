@@ -22,6 +22,6 @@ public class LogUtil {
 	}
 	
 	public static String getSpFlag(String userId) {
-		return "_spflag:userId:"+ userId+"_";
+		return " spflag:userId:"+ userId+" ";
 	}
 }

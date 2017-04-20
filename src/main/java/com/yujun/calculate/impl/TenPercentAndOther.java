@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yujun.calculate.OrderCalculate;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.PriceDO;
@@ -50,12 +51,12 @@ public class TenPercentAndOther implements OrderCalculate {
 		result.put("high", high);
 		String tempStr=null;
 		if(high!=null) {
-			tempStr = "最终价格区间上限是" + high.getAvaPrice() +":" + high.getAmount();
+			tempStr = "最终价格卖单是" + high.getAvaPrice() +":" + high.getAmount();
 		} else {
 			tempStr = "最终价格区间上限超出计算范围，请手动计算";
 		}
 		LogUtil.log(hoding.getUserId() ,tempStr);
-		LogUtil.log(hoding.getUserId() ,"最终价格区间下限是" + low.getAvaPrice()+":" + low.getAmount());
+		LogUtil.log(hoding.getUserId() ,"最终价格买单是" + low.getAvaPrice()+":" + low.getAmount());
 		
 		/*if(online.getNowPrice().greaterThan(hoding.getAvaPrice())){
 			log.info("当前价格超过成本线价格， 不作操作");
@@ -236,14 +237,7 @@ public class TenPercentAndOther implements OrderCalculate {
 			
 		}
 		
-		StringBuffer buffer = new StringBuffer();
-		for(int i=0; i<priceRegion.length;i++) {
-			buffer.append(i +".[buyPrice:" + priceRegion[i][0]+".count" + priceRegion[i][1] + "],");
-			if(i%5==0) {
-				buffer.append("\n");
-			}
-		}
-		LogUtil.log(userId, initStock.getZqCode() +",的1%波段区间是" + buffer.toString());
+		LogUtil.log(userId, initStock.getZqCode() +",的1%波段区间是" + JSONObject.toJSONString(priceRegion));
 		return priceRegion;
 	}
 

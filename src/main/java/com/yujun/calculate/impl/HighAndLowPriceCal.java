@@ -30,7 +30,7 @@ public class HighAndLowPriceCal implements OrderCalculate{
 	ThreadLocal<StringBuffer> buf = new ThreadLocal<StringBuffer>();
 	HoldingStockCal holdingStockCal = new HoldingStockCal();
 	public Map<String,StockDO> calculate(StockDO initStockDO, StockDO hoding, OnlinePriceDO online,int range) {
-		long[][] priceRegion 	= holdingStockCal.calStockRegion(initStockDO);
+		long[][] priceRegion 	= holdingStockCal.calStockRegion(hoding.getUserId(), initStockDO);
 		Map<String,StockDO> result = new HashMap<String,StockDO>();
 		StockDO[] byAmont = priceRegionByAmont(hoding.getUserId(), priceRegion, hoding);
 		StockDO[] byPrice = priceRegionByPrice(hoding.getUserId(), priceRegion, online);

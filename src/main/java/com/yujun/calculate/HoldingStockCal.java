@@ -3,6 +3,7 @@ package com.yujun.calculate;
 import org.apache.log4j.Logger;
 
 import com.yujun.domain.StockDO;
+import com.yujun.util.LogUtil;
 import com.yujun.util.Money;
 
 /**
@@ -12,7 +13,7 @@ import com.yujun.util.Money;
  */
 public class HoldingStockCal {
 	
-	public long[][] calStockRegion(StockDO initStock) {
+	public long[][] calStockRegion(String userId, StockDO initStock) {
 		long[][]  priceRegion = new long[70][2];
 		
 		StringBuffer buffer = new StringBuffer();
@@ -42,7 +43,7 @@ public class HoldingStockCal {
 				buffer.append("\n");
 			}
 		}
-		log.info(initStock.getZqCode() +",的1%波段区间\n" + buffer.toString());
+		LogUtil.log(userId ,initStock.getZqCode() +",的1%波段区间\n" + buffer.toString());
 		return priceRegion;
 	}
 	
@@ -51,7 +52,7 @@ public class HoldingStockCal {
 		StockDO stockDO= new StockDO();
 		stockDO.setAmount(10000);
 		stockDO.setAvaPrice(new Money(2339));
-		long[][] region = holdingStockCal.calStockRegion(stockDO);
+		long[][] region = holdingStockCal.calStockRegion("21",stockDO);
 		for(int i=0; i< region.length;i++) {
 			System.out.println(i +",[" + region[i][0] + ":" + region[i][1] +"]");
 		}

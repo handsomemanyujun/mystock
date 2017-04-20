@@ -39,7 +39,7 @@ public class TradeSchedule {
 						orders();
 					}
 				}else {
-					LogUtil.log("not a trade time witting");
+					LogUtil.log("Non trading time");
 				}
 			} else {
 				orders();

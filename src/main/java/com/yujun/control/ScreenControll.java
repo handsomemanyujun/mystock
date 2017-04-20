@@ -2,7 +2,7 @@ package com.yujun.control;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.Map;
 
@@ -118,10 +118,14 @@ public class ScreenControll {
 			
 			Resource  re = webApplicationContext.getResource("info.log");
 			StringBuffer buf = new StringBuffer();
-			BufferedReader br = new BufferedReader(new InputStreamReader(re.getInputStream()));
-
+		
+			RandomAccessFile randAccFile = new RandomAccessFile(re.getFile().getPath(),"r") ; 
+			long length = randAccFile.length(); 
+			randAccFile.seek(Math.max(0, length - size)); 
+			
 			String line = "";
-			while ((line = br.readLine()) != null) {
+			while ((line = randAccFile.readLine()) != null) {
+				line = new String(line.getBytes("ISO-8859-1"),"utf-8");
 				if(StringUtils.isEmpty(accountId)) {
 					buf.append(line+"</br>");
 				} else {
@@ -130,8 +134,7 @@ public class ScreenControll {
 					}
 				}
 			}
-			
-			br.close();
+			randAccFile.close();
 			model.put("price",	buf.substring(Math.max(0, buf.length()-size),buf.length()));  
 		} catch (Exception e) {
 			logger.error("fetch info.log error.", e);
