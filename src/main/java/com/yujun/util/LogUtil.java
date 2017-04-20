@@ -17,6 +17,10 @@ public class LogUtil {
 		log.info(getSpFlag(userId)+logInfo);
 	}
 	
+	public static void log(String userId, String logInfo,Exception e) {
+		log.info(getSpFlag(userId)+logInfo,e);
+	}
+	
 	public static String trimSpString(String userId,String logInfo) {
 		return logInfo.replace(getSpFlag(userId), "");
 	}
