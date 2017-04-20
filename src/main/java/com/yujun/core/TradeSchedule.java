@@ -114,8 +114,8 @@ public class TradeSchedule {
 						}
 					} else {
 						orderDO = new OrderDO();
-						orderDO.setAmount(((Math.abs(holdings.get(0)
-								.getAmount() - target.getAmount())) / 100) * 100);
+						orderDO.setAmount(Math.abs(holdings.get(0)
+								.getAmount() - target.getAmount()));
 						orderDO.setBuy(false);
 						orderDO.setPrice(target.getAvaPrice());
 						orderDO.setZqCode(zqCode);
