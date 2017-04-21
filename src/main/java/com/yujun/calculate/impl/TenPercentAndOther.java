@@ -201,7 +201,9 @@ public class TenPercentAndOther implements OrderCalculate {
 			LogUtil.log(userId ,"股票价格标准差是" + priceStandard);
 			return (long)(average);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			//throw new RuntimeException(e);
+			LogUtil.log(userId ,"出错" ,e);
+			return 0;
 		}
 	}
 	
