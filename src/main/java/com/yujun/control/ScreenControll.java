@@ -1,6 +1,8 @@
 package com.yujun.control;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.util.List;
@@ -108,34 +110,27 @@ public class ScreenControll {
 	    return "detail";  
 	}
 	
+	@RequestMapping(value="/console")
+	public String console(Map<String, Object> model,@RequestParam(value="size", defaultValue="10000") int size,HttpSession session) {
+		try {
+			StringBuffer buf = getLogInfo(size,null);
+			model.put("price",	buf.toString());  
+		} catch (Exception e) {
+			logger.error("fetch info.log error.", e);
+		}	
+		return "log";
+	}
+	
 	@RequestMapping(value="/log")
 	public String log(Map<String, Object> model,@RequestParam(value="size", defaultValue="10000") int size,HttpSession session) {
 		try {
-			String accountId=null;
-			if(session.getAttribute(ACCOUNT)!=null) {
-				accountId = ((String)session.getAttribute(ACCOUNT));
+			if(session.getAttribute(ACCOUNT)==null) {
+				return "login";
 			}
+			String accountId = ((String)session.getAttribute(ACCOUNT));
 			
-			Resource  re = webApplicationContext.getResource("info.log");
-			StringBuffer buf = new StringBuffer();
-		
-			RandomAccessFile randAccFile = new RandomAccessFile(re.getFile().getPath(),"r") ; 
-			long length = randAccFile.length(); 
-			randAccFile.seek(Math.max(0, length - size)); 
-			
-			String line = "";
-			while ((line = randAccFile.readLine()) != null) {
-				line = new String(line.getBytes("ISO-8859-1"),"utf-8");
-				if(StringUtils.isEmpty(accountId)) {
-					buf.append(line+"</br>");
-				} else {
-					if(line.contains(LogUtil.getSpFlag(accountId))) {
-						buf.append(LogUtil.trimSpString(accountId, line)+"</br>");
-					}
-				}
-			}
-			randAccFile.close();
-			model.put("price",	buf.substring(Math.max(0, buf.length()-size),buf.length()));  
+			StringBuffer buf = getLogInfo(size,accountId);
+			model.put("price",	buf.toString());  
 		} catch (Exception e) {
 			logger.error("fetch info.log error.", e);
 		}	
@@ -255,5 +250,28 @@ public class ScreenControll {
 			settingService.updateNewSetting(setting);
 		}
 		return "redirect:home";
+	}
+	
+	private StringBuffer getLogInfo(int size, String accountId) throws Exception {
+		Resource  re = webApplicationContext.getResource("info.log");
+		StringBuffer buf = new StringBuffer();
+	
+		RandomAccessFile randAccFile = new RandomAccessFile(re.getFile().getPath(),"r") ; 
+		long length = randAccFile.length(); 
+		randAccFile.seek(Math.max(0, length - size)); 
+		
+		String line = "";
+		while ((line = randAccFile.readLine()) != null) {
+			line = new String(line.getBytes("ISO-8859-1"),"utf-8");
+			if(StringUtils.isEmpty(accountId)) {
+				buf.append(line+"</br>");
+			} else {
+				if(line.contains(LogUtil.getSpFlag(accountId))) {
+					buf.append(LogUtil.trimSpString(accountId, line)+"</br>");
+				}
+			}
+		}
+		randAccFile.close();
+		return buf;
 	}
 }
