@@ -27,11 +27,11 @@ public class TradeSchedule {
 	Calculata calculata;
 	@Autowired
 	AccountService accountService;
-	boolean isTest = false;
+	boolean isProduct = true;
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {
-			if (!isTest) {
+			if (isProduct) {
 				if(DateUtil.isOpenTradeTime()) {
 					if(DateUtil.needCancelOrder()) {	// 收市前最后一分钟，测单
 						cancle();
@@ -89,7 +89,7 @@ public class TradeSchedule {
 				if (target != null) {
 					OrderDO orderDO = stockClient.haveDelegate(setting.getUserId(), true, zqCode);
 					if (orderDO != null) {
-						if (!isTest && !orderDO.getPrice().equals(target.getAvaPrice())) {
+						if (isProduct && !orderDO.getPrice().equals(target.getAvaPrice())) {
 							stockClient.cancleOrder(setting.getUserId(), orderDO);
 						}
 					} else {
@@ -99,7 +99,7 @@ public class TradeSchedule {
 						orderDO.setBuy(true);
 						orderDO.setPrice(target.getAvaPrice());
 						orderDO.setZqCode(zqCode);
-						if (isTest) {
+						if (isProduct) {
 							stockClient.crateOrder(setting.getUserId(), orderDO);
 						}
 					}
@@ -108,7 +108,7 @@ public class TradeSchedule {
 				if (target != null) {
 					OrderDO orderDO = stockClient.haveDelegate(setting.getUserId(), false, zqCode);
 					if (orderDO != null) {
-						if (!isTest&& !orderDO.getPrice().equals(target.getAvaPrice())) {
+						if (isProduct&& !orderDO.getPrice().equals(target.getAvaPrice())) {
 							stockClient.cancleOrder(setting.getUserId(),
 									orderDO);
 						}
@@ -119,7 +119,7 @@ public class TradeSchedule {
 						orderDO.setBuy(false);
 						orderDO.setPrice(target.getAvaPrice());
 						orderDO.setZqCode(zqCode);
-						if (isTest) {
+						if (isProduct) {
 							stockClient.crateOrder(setting.getUserId(), orderDO);
 						}
 					}
