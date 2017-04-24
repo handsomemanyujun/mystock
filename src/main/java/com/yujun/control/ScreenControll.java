@@ -111,9 +111,9 @@ public class ScreenControll {
 	}
 	
 	@RequestMapping(value="/console")
-	public String console(Map<String, Object> model,@RequestParam(value="size", defaultValue="10000") int size,HttpSession session) {
+	public String console(Map<String, Object> model,@RequestParam(value="size", defaultValue="20000") int size,HttpSession session) {
 		try {
-			StringBuffer buf = getLogInfo(size,null);
+			String buf = getLogInfo(size,null);
 			model.put("price",	buf.toString());  
 		} catch (Exception e) {
 			logger.error("fetch info.log error.", e);
@@ -122,14 +122,14 @@ public class ScreenControll {
 	}
 	
 	@RequestMapping(value="/log")
-	public String log(Map<String, Object> model,@RequestParam(value="size", defaultValue="10000") int size,HttpSession session) {
+	public String log(Map<String, Object> model,@RequestParam(value="size", defaultValue="20000") int size,HttpSession session) {
 		try {
 			if(session.getAttribute(ACCOUNT)==null) {
 				return "login";
 			}
 			String accountId = ((String)session.getAttribute(ACCOUNT));
 			
-			StringBuffer buf = getLogInfo(size,accountId);
+			String buf = getLogInfo(size,accountId);
 			model.put("price",	buf.toString());  
 		} catch (Exception e) {
 			logger.error("fetch info.log error.", e);
@@ -252,26 +252,33 @@ public class ScreenControll {
 		return "redirect:home";
 	}
 	
-	private StringBuffer getLogInfo(int size, String accountId) throws Exception {
-		Resource  re = webApplicationContext.getResource("info.log");
-		StringBuffer buf = new StringBuffer();
-	
-		RandomAccessFile randAccFile = new RandomAccessFile(re.getFile().getPath(),"r") ; 
-		long length = randAccFile.length(); 
-		randAccFile.seek(Math.max(0, length - size)); 
-		
-		String line = "";
-		while ((line = randAccFile.readLine()) != null) {
-			line = new String(line.getBytes("ISO-8859-1"),"utf-8");
-			if(StringUtils.isEmpty(accountId)) {
-				buf.append(line+"</br>");
-			} else {
-				if(line.contains(LogUtil.getSpFlag(accountId))) {
-					buf.append(LogUtil.trimSpString(accountId, line)+"</br>");
+	private String getLogInfo(int size, String accountId)
+			throws Exception {
+		Resource re = webApplicationContext.getResource("info.log");
+		String result = "";
+		RandomAccessFile randAccFile = new RandomAccessFile(re.getFile().getPath(), "r");
+		long length = randAccFile.length(); // 获得文件的长度,以便定位末尾
+		long pos = length - 1; // 定位文件尾
+		while (pos > 0) { // 判断文件是否到达头
+			--pos;
+			randAccFile.seek(pos); // 定位文件指针所指的位置
+			if (randAccFile.readByte() == '\n') { // 如果是换行符,就可以读取该行了
+				String line = new String(randAccFile.readLine().getBytes("ISO-8859-1"), "utf-8");
+				if (StringUtils.isEmpty(accountId)) {
+					result = line + "</br>" + result;
+				} else {
+					if (line.contains(LogUtil.getSpFlag(accountId))) {
+						result = LogUtil.trimSpString(accountId, line)  + "</br>" + result;
+					}
 				}
 			}
+
+			if (result.length() > size) {
+				break;
+			}
 		}
+
 		randAccFile.close();
-		return buf;
+		return result;
 	}
 }
