@@ -105,8 +105,9 @@ public class ScreenControll {
 		
 		List<StockDO> holdings= client.queryStockDO(accountId, zqCode);
 		OnlinePriceDO online 	= client.queryMarket(set.getUserId(), set.getCode());
-		calculata.getTradeOrder(set.getType(),set.buildStockDO(),holdings.get(0), online,new Float(set.getRate()).intValue());
-	
+		if(holdings.size()>0 ){
+			calculata.getTradeOrder(set.getType(),set.buildStockDO(),holdings.get(0), online,new Float(set.getRate()).intValue());
+		}
 	    return "detail";  
 	}
 	

@@ -113,15 +113,16 @@ public class TdxClient implements StockClient{
 		cleanResult();
 		if(res !=null) {
 			String[][] items =TdxResultUtil.parseStr(res);
-			fundPoolDO= new FundPoolDO();
-			fundPoolDO.setAvailableFunds(new Money(items[1][2]));
-			fundPoolDO.setFreezeFunds(new Money(items[1][3]));
-			fundPoolDO.setFeatchFunds(new Money(items[1][4]));
-			fundPoolDO.setTotalValue(new Money(items[1][5]));
-			fundPoolDO.setStockValue(new Money(items[1][6]));
-			
+			if(items.length>1) {
+				fundPoolDO= new FundPoolDO();
+				fundPoolDO.setAvailableFunds(new Money(items[1][2]));
+				fundPoolDO.setFreezeFunds(new Money(items[1][3]));
+				fundPoolDO.setFeatchFunds(new Money(items[1][4]));
+				fundPoolDO.setTotalValue(new Money(items[1][5]));
+				fundPoolDO.setStockValue(new Money(items[1][6]));
+				LogUtil.log(userId, "持有资金情况" + fundPoolDO.toString());
+			}
 		}
-		LogUtil.log(userId, "持有资金情况" + fundPoolDO.toString());
 		return fundPoolDO;
 	}
 	
@@ -238,14 +239,16 @@ public class TdxClient implements StockClient{
 		OnlinePriceDO market = null;
 		if(res !=null) {
 			String[][] items =TdxResultUtil.parseStr(res);
-			market = new OnlinePriceDO();
-			market.setZqCode(items[1][0]);
-			market.setZqName(items[1][1]);
-			market.setyPrice(new Money(items[1][2]));
-			market.setNsPrice(new Money(items[1][3]));
-			market.setNowPrice(new Money(items[1][5]));
+			if(items.length>1) {
+				market = new OnlinePriceDO();
+				market.setZqCode(items[1][0]);
+				market.setZqName(items[1][1]);
+				market.setyPrice(new Money(items[1][2]));
+				market.setNsPrice(new Money(items[1][3]));
+				market.setNowPrice(new Money(items[1][5]));
+				LogUtil.log(userId, "股票:" +market.getZqName()+ " ，当前的价格是" + market);
+			}
 		}
-		LogUtil.log(userId, "股票:" +market.getZqName()+ " ，当前的价格是" + market);
 		return market;
 	}
 	/**

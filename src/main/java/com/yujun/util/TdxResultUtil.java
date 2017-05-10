@@ -169,8 +169,9 @@ public class TdxResultUtil {
 			BufferedReader reader =  HttpClient.getRead(path);
 			
 			String line = reader.readLine();
-			while (!StringUtils.isEmpty(line=reader.readLine())) {
+			while (!StringUtils.isEmpty(line=reader.readLine())) {				
 				String[] item = line.split(",");
+				if(new Money(item[5]).getCent()==0) continue;
 				PriceDO offlinePriceDO= new PriceDO();
 				offlinePriceDO.setDate(format.parse(item[0]));
 				offlinePriceDO.setOpenPrice(new Money(item[1]));

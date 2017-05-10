@@ -92,7 +92,7 @@ public class TradeSchedule {
 						if (isProduct && !orderDO.getPrice().equals(target.getAvaPrice())) {
 							stockClient.cancleOrder(setting.getUserId(), orderDO);
 						}
-					} else {
+					} else {  
 						orderDO = new OrderDO();
 						orderDO.setAmount(((Math.abs(target.getAmount()
 								- holdings.get(0).getAmount())) / 100) * 100);
