@@ -1,5 +1,7 @@
 package com.yujun.client.impl;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,14 @@ public class tdxClientProxy implements StockClient{
 		if(tdxClinets.get(userId)!=null){
 			tdxClinets.get(userId).crateOrder(userId,orderDO);
 		}
+	}
+	@Override
+	public Date latestOrderTime(String userId, String zqdm)
+			throws ParseException {
+		if(tdxClinets.get(userId)!=null){
+			return tdxClinets.get(userId).latestOrderTime(userId,zqdm);
+		}
+		return null;
 	}
 	
 }

@@ -1,6 +1,8 @@
 package com.yujun.client.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -102,5 +104,12 @@ public class MockClient implements StockClient{
 	public boolean login(String userId, String passWord, String gddm) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Date latestOrderTime(String userId, String zqdm)
+			throws ParseException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

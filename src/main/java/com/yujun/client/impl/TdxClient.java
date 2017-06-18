@@ -1,11 +1,12 @@
 package com.yujun.client.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
 import com.sun.jna.Library;
@@ -15,6 +16,7 @@ import com.yujun.domain.FundPoolDO;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.OrderDO;
 import com.yujun.domain.StockDO;
+import com.yujun.util.DateUtil;
 import com.yujun.util.LogUtil;
 import com.yujun.util.Money;
 import com.yujun.util.TdxResultUtil;
@@ -179,6 +181,24 @@ public class TdxClient implements StockClient{
 		}
 		LogUtil.log(userId, zqdm +"目前不存在 "+(isBuy ?"买":"卖")+ "委托单");
 		return null;
+	}
+	
+	/**
+	 * 查询最新成交的订单时间
+	 * @param isBuy
+	 * @param zqdm
+	 * @return
+	 * @throws ParseException 
+	 */
+	public Date latestOrderTime(String userId, String zqdm) throws ParseException{
+		List<OrderDO> list = queryDelegate(userId,zqdm);
+		Date date =null;
+		for(OrderDO orderDO: list) {
+			if(orderDO.getStatus() == OrderDO.SUCCESS) {
+				date = DateUtil.getNowDateByTime(orderDO.getDate());
+			}
+		}
+		return date;
 	}
 	
 	

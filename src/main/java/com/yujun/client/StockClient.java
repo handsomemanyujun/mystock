@@ -1,5 +1,7 @@
 package com.yujun.client;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import com.yujun.domain.FundPoolDO;
@@ -58,5 +60,14 @@ public interface StockClient {
 	 * @param isBuy
 	 */
 	public void crateOrder(String userId, OrderDO orderDO) ;
+	
+	/**
+	 * 查询最新成交的订单时间
+	 * @param isBuy
+	 * @param zqdm
+	 * @return
+	 * @throws ParseException 
+	 */
+	public Date latestOrderTime(String userId, String zqdm) throws ParseException;
 	
 }

@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 public class DateUtil {
-	public static Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。 
 	public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");  
 	public static boolean isOpenTradeTime() throws Exception{
 		//return true;
@@ -49,9 +48,7 @@ public class DateUtil {
 		
 		return now.after(close.getTime());
 	}
-	public static void main(String[] args) throws InterruptedException {
-		
-	}
+	
 	
 	
 	private static  List<Date> noTradeDays = new ArrayList<Date>();
@@ -93,8 +90,28 @@ public class DateUtil {
 	    }    
 	 
 	 public static Date addDay(Date date , int day) {
+		 Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。 
 		 cal.setTime(date); 
 		 cal.add(Calendar.DATE, day);//取当前日期的前一天.  
 		 return cal.getTime();
 	 }
+	 
+	 public static Date addMinute(Date date, int minute) throws ParseException {
+		 	if(date ==null) return null;
+			Calendar cal = Calendar.getInstance();// 使用默认时区和语言环境获得一个日历。
+			cal.setTime(date);
+			cal.add(Calendar.MINUTE, minute);// 取当前日期的前一天.
+			return cal.getTime();
+		}
+	 
+	public static Date getNowDateByTime(String time) throws ParseException {
+		String date = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		return sdf.parse(date + " " + time);
+	}
+	
+	public static void main(String[] args) throws InterruptedException, ParseException {
+		Date date = addMinute(new Date(),10);
+		System.out.println(date);
+	}
 }

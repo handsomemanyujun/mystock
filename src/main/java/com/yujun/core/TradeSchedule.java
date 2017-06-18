@@ -1,9 +1,9 @@
 package com.yujun.core;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -91,6 +91,13 @@ public class TradeSchedule {
 					LogUtil.log(setting.getUserId(),"成本价已小于当前价 ，不进操作");
 					continue;
 				}
+				
+				Date date = DateUtil.addMinute(stockClient.latestOrderTime(setting.getUserId(), setting.getCode()),12);
+				if(date!=null && new Date().before(date)){
+					LogUtil.log(setting.getUserId(),setting.getName() +",距离上次交易成功时间相差12分钟以内，放弃本轮交易");
+					continue;
+				}
+				
 				StockDO target = lh.get("low"); // 订单买入价
 				if (target != null) {
 					OrderDO orderDO = stockClient.haveDelegate(setting.getUserId(), true, zqCode);
