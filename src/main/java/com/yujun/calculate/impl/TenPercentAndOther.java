@@ -161,6 +161,9 @@ public class TenPercentAndOther implements OrderCalculate {
 				list = TdxResultUtil.parseDaylineByWeb(zqCode);
 				//daylineMap.put(zqCode, list);
 			//}
+			if(list==null) {
+				return 0;
+			}
 			int[] price = new int[7];
 			String priceStr ="";
 			for (int i = 0; i < price.length; i++) {
@@ -202,7 +205,7 @@ public class TenPercentAndOther implements OrderCalculate {
 			return (long)(average);
 		} catch (Exception e) {
 			//throw new RuntimeException(e);
-			LogUtil.log(userId ,"出错" ,e);
+			LogUtil.log("出错",e);
 			return 0;
 		}
 	}

@@ -54,7 +54,9 @@ public class TradeSchedule {
 		for (Map<String, Setting> account : settingService.getAllUserSetting().values()) {
 			for (Setting setting : account.values()) { 
 				OrderDO orderDO = stockClient.haveDelegate(setting.getUserId(), true, setting.getCode());
-				stockClient.cancleOrder(setting.getUserId(),orderDO);
+				if(orderDO !=null) {
+					stockClient.cancleOrder(setting.getUserId(),orderDO);
+				}
 			}
 		}
 	}
@@ -72,8 +74,8 @@ public class TradeSchedule {
 					continue;
 				}
 
-				LogUtil.log(setting.getUserId(),"\n\n开始进入自动下单程序：" + setting.getCode());
-
+				LogUtil.log(setting.getUserId(),"\n\n开始进入自动下单程序：" + setting.getName());
+				
 				String zqCode = setting.getCode();
 				List<StockDO> holdings = stockClient.queryStockDO(setting.getUserId(), setting.getCode());
 				if (holdings == null || holdings.size() == 0) {
@@ -84,7 +86,11 @@ public class TradeSchedule {
 				OnlinePriceDO online = stockClient.queryMarket(setting.getUserId(), setting.getCode());
 				Map<String, StockDO> lh = calculata.getTradeOrder(setting.getType(), setting.buildStockDO(),
 						holdings.get(0), online, new Float(setting.getRate()).intValue());
-
+				
+				if(online.getNowPrice().greaterThan(holdings.get(0).getAvaPrice())){
+					LogUtil.log(setting.getUserId(),"成本价已小于当前价 ，不进操作");
+					continue;
+				}
 				StockDO target = lh.get("low"); // 订单买入价
 				if (target != null) {
 					OrderDO orderDO = stockClient.haveDelegate(setting.getUserId(), true, zqCode);

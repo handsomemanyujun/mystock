@@ -12,6 +12,7 @@ public class DateUtil {
 	public static Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。 
 	public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");  
 	public static boolean isOpenTradeTime() throws Exception{
+		//return true;
 		Calendar open = Calendar.getInstance();
 		open.set(Calendar.HOUR_OF_DAY, 9);
 		open.set(Calendar.MINUTE,15);
@@ -44,7 +45,7 @@ public class DateUtil {
 		
 		Calendar close = Calendar.getInstance();
 		close.set(Calendar.HOUR_OF_DAY, 14);
-		close.set(Calendar.MINUTE,58);
+		close.set(Calendar.MINUTE,55);
 		
 		return now.after(close.getTime());
 	}
