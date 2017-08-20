@@ -1,5 +1,6 @@
 package com.yujun.core;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.yujun.calculate.algorithm.impl.KDJ;
+import com.yujun.calculate.algorithm.impl.MA;
 import com.yujun.client.StockClient;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.OrderDO;
@@ -27,7 +30,7 @@ public class TradeSchedule {
 	Calculata calculata;
 	@Autowired
 	AccountService accountService;
-	boolean isProduct = true;
+	boolean isProduct = false;
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {
@@ -106,14 +109,19 @@ public class TradeSchedule {
 							stockClient.cancleOrder(setting.getUserId(), orderDO);
 						}
 					} else {  
-						orderDO = new OrderDO();
-						orderDO.setAmount(((Math.abs(target.getAmount()
-								- holdings.get(0).getAmount())) / 100) * 100);
-						orderDO.setBuy(true);
-						orderDO.setPrice(target.getAvaPrice());
-						orderDO.setZqCode(zqCode);
-						if (isProduct) {
-							stockClient.crateOrder(setting.getUserId(), orderDO);
+						if(canOrderBy(setting.getUserId(),setting.getCode())){
+								
+							orderDO = new OrderDO();
+							orderDO.setAmount(((Math.abs(target.getAmount()
+									- holdings.get(0).getAmount())) / 100) * 100);
+							orderDO.setBuy(true);
+							orderDO.setPrice(target.getAvaPrice());
+							orderDO.setZqCode(zqCode);
+							if (isProduct) {
+								stockClient.crateOrder(setting.getUserId(), orderDO);
+							}
+						} else {
+							LogUtil.log(setting.getUserId(),"当前股票经技术分析后不适合做买入操作");
 						}
 					}
 				}
@@ -139,6 +147,21 @@ public class TradeSchedule {
 				}
 
 			}
+		}
+	}
+	
+	/**
+	 * 通过技术指标判断是否
+	 * @return
+	 */
+	private boolean canOrderBy(String useId, String code) {
+		boolean ma = new MA().getTradeSignal(code, LocalDate.now());
+		boolean kdj = new KDJ().getTradeSignal(code, LocalDate.now());
+		LogUtil.log(useId, "ma:" + ma + ",kdj:" + kdj);
+		if (ma && kdj) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

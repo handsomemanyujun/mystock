@@ -1,24 +1,24 @@
 package com.yujun.domain;
 
 import java.text.DateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-import com.yujun.util.DateUtil;
 import com.yujun.util.Money;
 
 public class PriceDO {
-	private Date date;
+	private LocalDate date;
 	private Money  openPrice;
 	private Money highestPrice;
 	private Money LowestPrice;
 	private Money closingPrice;
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 	public String getDateStr() {
-		return DateUtil.dateFormat.format(date);
+		return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 	}
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 	public Money getOpenPrice() {
