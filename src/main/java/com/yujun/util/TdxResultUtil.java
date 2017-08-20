@@ -5,18 +5,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.yujun.domain.PriceDO;
 
 public class TdxResultUtil {
-	static Map<String,Map<String,List<PriceDO>>> datePricemap = new HashMap<String,Map<String,List<PriceDO>>>();
+	static Map<String,List<PriceDO>> datePricemap = new HashMap<String,List<PriceDO>>();
 	public static String[][] parseStr(String result){
 		if(result !=null) {
 			String[] lines	 = result.split("\n");
@@ -97,7 +100,7 @@ public class TdxResultUtil {
             	String[] str = tempString.split("\t");
             	if(str.length >2) {
 	            	PriceDO offlinePriceDO= new PriceDO();
-					offlinePriceDO.setDate(format.parse(str[0]));
+					offlinePriceDO.setDate(LocalDate.parse(str[0]));
 					offlinePriceDO.setOpenPrice(new Money(str[1]));
 					offlinePriceDO.setHighestPrice(new Money(str[2]));
 					offlinePriceDO.setLowestPrice(new Money(str[3]));
@@ -131,7 +134,7 @@ public class TdxResultUtil {
 			DateFormat format =  new java.text.SimpleDateFormat("yyyyMMdd");
 			while ((fis.read(buf)) != -1) {
 				PriceDO offlinePriceDO= new PriceDO();
-				offlinePriceDO.setDate(format.parse(TdxResultUtil.byteArrayToInt(buf,0,4)+""));
+				offlinePriceDO.setDate(LocalDate.parse(TdxResultUtil.byteArrayToInt(buf,0,4)+""));
 				offlinePriceDO.setOpenPrice(new Money((long)byteArrayToInt(buf,4,8)));
 				offlinePriceDO.setHighestPrice(new Money((long)byteArrayToInt(buf,8,12)));
 				offlinePriceDO.setLowestPrice(new Money((long)byteArrayToInt(buf,12,16)));
@@ -146,30 +149,47 @@ public class TdxResultUtil {
 	}
 	
 	public static List<PriceDO> parseDaylineByWeb(String zqcode) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String now = LocalDate.now().format(formatter);
+		String before = LocalDate.now().minusDays(365).format(formatter);
+		
+		String requestUrl = "http://stock.liangyee.com/bus-api/stock/freeStockMarketData/getDailyKBar"
+				+ "?userKey=690F0B3176CB4A14915063A7891E5CB5&startDate="+before + "&endDate="+now;
+		
 		List<PriceDO> list = new ArrayList<PriceDO>();
-		DateFormat format =  new java.text.SimpleDateFormat("yyyy-MM-dd");
-		String nowDay =format.format(new Date());
-		Map<String,List<PriceDO>> nowMap;
-		if(datePricemap.containsKey(nowDay)){
-			nowMap = datePricemap.get(nowDay);
-		} else {
-			datePricemap.clear();
-			nowMap = new HashMap<String,List<PriceDO>>();
-		}
-		if(nowMap.containsKey(zqcode)){
-			return nowMap.get(zqcode);
-		}
+		String key = now + "_" + zqcode;
+		if(datePricemap.containsKey(key)){
+			return datePricemap.get(key);
+		} 
 		try {
-			String path;
 			if (TdxResultUtil.isSHCode(zqcode)) {
-				path = "http://table.finance.yahoo.com/table.csv?s="+zqcode+".ss";
+				requestUrl += "&type=0&symbol="+zqcode;
 			} else {
-				path = "http://table.finance.yahoo.com/table.csv?s="+zqcode+".sz";
+				requestUrl += "&type=1&symbol="+zqcode;
 			}
-			BufferedReader reader =  HttpClient.getRead(path);
+			BufferedReader reader =  HttpClient.getRead(requestUrl);
+			DateFormat format =  new java.text.SimpleDateFormat("yyyy-MM-dd");
+			StringBuffer buf = new StringBuffer();
+			String line ="";
+			while (!StringUtils.isEmpty(line=reader.readLine())) {	
+				buf.append(line);
+			}
+			JSONObject json = new JSONObject().parseObject(buf.toString());
+			int i = 0;
+			JSONArray jsarr = json.getJSONArray("result");
 			
-			String line = reader.readLine();
-			while (!StringUtils.isEmpty(line=reader.readLine())) {				
+			for(Object obj : jsarr) {
+				String[] item =((String)obj).split(",");
+				PriceDO offlinePriceDO= new PriceDO();
+				offlinePriceDO.setDate(LocalDate.parse(item[0]));
+				offlinePriceDO.setOpenPrice(new Money(item[1]));
+				offlinePriceDO.setHighestPrice(new Money(item[3]));
+				offlinePriceDO.setLowestPrice(new Money(item[4]));
+				offlinePriceDO.setClosingPrice(new Money(item[2]));
+				list.add(offlinePriceDO);
+			}
+		/*	while (!StringUtils.isEmpty(line=reader.readLine())) {	
+				
 				String[] item = line.split(",");
 				if(new Money(item[5]).getCent()==0) continue;
 				PriceDO offlinePriceDO= new PriceDO();
@@ -179,13 +199,12 @@ public class TdxResultUtil {
 				offlinePriceDO.setLowestPrice(new Money(item[3]));
 				offlinePriceDO.setClosingPrice(new Money(item[4]));
 				list.add(offlinePriceDO);
-			}
+			}*/
 			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		nowMap.put(zqcode, list);
-		datePricemap.put(nowDay, nowMap);
+		datePricemap.put(key, list);
 		return list;
 	}
 	

@@ -1,42 +1,39 @@
 package com.yujun.calculate.algorithm.impl;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 import com.yujun.calculate.algorithm.Algorithm;
 import com.yujun.domain.PriceDO;
-import com.yujun.util.DateUtil;
 import com.yujun.util.LogUtil;
 import com.yujun.util.TdxResultUtil;
 
 public class MA implements Algorithm{
 	 private final int day[] = {
-		        3, 10
+		        3, 7
 	};
 	@Override
-	public int getTradeSignal(String code, Date date) {
-		List<PriceDO> data = TdxResultUtil.parseDaylineByTxt(code);
+	public boolean getTradeSignal(String code, LocalDate date) {
+		List<PriceDO> data = TdxResultUtil.parseDaylineByWeb(code);
 		for(int i = 0; i < data.size(); i++) {
-			if(!data.get(i).getDate().before(date)) {
-				data = data.subList(0, i);
+			if(!data.get(i).getDate().isBefore(date)) {
+				data = data.subList(Math.min(i, data.size()),data.size()-1);
 				break;
 			}
 		}
-		return getFlag(data);
+		return getFlag(data)>=0 ? true:false;
 	}
 	
 	private int getFlag(List<PriceDO> data) {
 		float[] result = new float[day.length];
         for(int i = 0; i < day.length; i++) {
-        	result[i] = getAverage(data.subList(data.size() - day[i], data.size()));
+        	result[i] = getAverage(data.subList(0,day[i]));
         }
        /* float[] yestdayResult = new float[day.length];        
         for(int i = 0; i < day.length; i++) {
         	yestdayResult[i] = getAverage(data.subList(data.size() - day[i]-1, data.size()-1));
         }*/
-        LogUtil.log(result[0] + "->" +  result[1] +",");
+       // System.out.print(result[0] + "->" +  result[1] +",");
         if(result[0] >= result[1] 
         		//&& yestdayResult[0] < yestdayResult[1]
         		) {
@@ -52,25 +49,20 @@ public class MA implements Algorithm{
 		return 0;
 	}
 	
-	//�@ȡƽ��ֵ
     public static float getAverage(List<PriceDO> price) {
         float sum = 0.0f;
         for(int i = 0;i < price.size();i++){
             sum += price.get(i).getClosingPrice().getCent();
-            LogUtil.log(price.get(i).getDateStr() +"==" +price.get(i).getClosingPrice().getCent());
+         //  LogUtil.log(price.get(i).getDateStr() +"==" +price.get(i).getClosingPrice().getCent());
         }
      
         return sum / price.size();
     }
     
 	public static void main(String[] args) {
-		MA ma = new MA();
-		Date date = new Date();
-		for(int i=1; i<100;i++) {
-			Date date11 = DateUtil.addDay(date, 0-i);
-			LogUtil.log(" "+ DateUtil.dateFormat.format(date11) +"," + ma.getTradeSignal("600750",date11));
-		}
-		
+		MA ma  = new MA();
+		boolean flag = ma.getTradeSignal("300085", LocalDate.now());
+		System.out.println(flag);
 	}
 
 }
