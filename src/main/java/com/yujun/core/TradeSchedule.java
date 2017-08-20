@@ -87,10 +87,10 @@ public class TradeSchedule {
 				Map<String, StockDO> lh = calculata.getTradeOrder(setting.getType(), setting.buildStockDO(),
 						holdings.get(0), online, new Float(setting.getRate()).intValue());
 				
-				if(online.getNowPrice().greaterThan(holdings.get(0).getAvaPrice())){
+				/*if(online.getNowPrice().greaterThan(holdings.get(0).getAvaPrice())){
 					LogUtil.log(setting.getUserId(),"成本价已小于当前价 ，不进操作");
 					continue;
-				}
+				}*/
 				
 				Date date = DateUtil.addMinute(stockClient.latestOrderTime(setting.getUserId(), setting.getCode()),12);
 				if(date!=null && new Date().before(date)){
