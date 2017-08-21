@@ -14,6 +14,7 @@ public class StockDO {
 	private Money nowValue; //最新市值
 	private Money floatValue; //浮动盈亏
 	private float floatRate;	//浮动比例
+	private String status;	//监控开启状态
 	
 	public StockDO() {
 		
@@ -89,6 +90,12 @@ public class StockDO {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	public String toString() {
 		return "zqCode : " + zqCode + ",zqName : " + zqName + ",amount : " + amount

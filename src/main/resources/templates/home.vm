@@ -29,7 +29,7 @@
 	            <td>$!{stock.amount}/$!{stock.salesAmount}</td>
 	            <td>$!stock.nowPrice/$!stock.avaPrice</td>
 	            <td>$!stock.floatValue/$!stock.floatRate%</td>
-	            <td><a href="/detail.htm?zqCode=$!stock.zqCode">详情</a></td>
+	            <td><a href="/detail.htm?zqCode=$!stock.zqCode">详情($stock.status)</a></td>
 	          </tr>
           #end
         </tbody>

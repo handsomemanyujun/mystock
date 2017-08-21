@@ -65,18 +65,24 @@ public class ScreenControll {
 	 * @param model
 	 * @param session
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping("/home")  
-	public String accountDetail(Map<String, Object> model,HttpSession session){ 
-		if(session.getAttribute(ACCOUNT)==null) {
+	public String accountDetail(Map<String, Object> model, HttpSession session) throws Exception {
+		if (session.getAttribute(ACCOUNT) == null) {
 			return "login";
 		}
-		
-		String accountId = ((String)session.getAttribute(ACCOUNT));
-		model.put("accountId",accountId);  
-	    model.put("fund",client.queryFundDO(accountId));  
-	    model.put("stocks",client.queryStockDO(accountId,null));  
-	    return "home";  
+
+		String accountId = ((String) session.getAttribute(ACCOUNT));
+		model.put("accountId", accountId);
+		model.put("fund", client.queryFundDO(accountId));
+		List<StockDO> list = client.queryStockDO(accountId, null);
+		for (StockDO stockDO : list) {
+			Setting set = settingService.getUserConfig(accountId, stockDO.getZqCode());
+			stockDO.setStatus((set == null || set.getStatus() == 0) ? "关闭" : "开启");
+		}
+		model.put("stocks", list);
+		return "home";
 	} 
 	
 	/**
@@ -100,7 +106,7 @@ public class ScreenControll {
 		model.put("orders",client.queryDelegate(accountId,zqCode)); 
 		Setting set = settingService.getUserConfig(accountId,zqCode);
 		if(set!=null) {
-			model.put("status",	set.getStatus()==0 ? "关闭":"开启");
+			model.put("status",	(set == null || set.getStatus() == 0) ? "关闭":"开启");
 		}
 		
 		List<StockDO> holdings= client.queryStockDO(accountId, zqCode);
