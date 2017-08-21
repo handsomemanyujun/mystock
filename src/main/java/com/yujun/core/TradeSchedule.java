@@ -30,7 +30,7 @@ public class TradeSchedule {
 	Calculata calculata;
 	@Autowired
 	AccountService accountService;
-	boolean isProduct = false;
+	boolean isProduct = true;
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {
@@ -109,8 +109,7 @@ public class TradeSchedule {
 							stockClient.cancleOrder(setting.getUserId(), orderDO);
 						}
 					} else {  
-						if(canOrderBy(setting.getUserId(),setting.getCode())){
-								
+						if(canOrderBuy(setting.getUserId(),setting.getCode())){
 							orderDO = new OrderDO();
 							orderDO.setAmount(((Math.abs(target.getAmount()
 									- holdings.get(0).getAmount())) / 100) * 100);
@@ -151,13 +150,13 @@ public class TradeSchedule {
 	}
 	
 	/**
-	 * 通过技术指标判断是否
+	 * 通过技术指标判断是否可以买
 	 * @return
 	 */
-	private boolean canOrderBy(String useId, String code) {
+	private boolean canOrderBuy(String useId, String code) {
 		boolean ma = new MA().getTradeSignal(code, LocalDate.now());
 		boolean kdj = new KDJ().getTradeSignal(code, LocalDate.now());
-		LogUtil.log(useId, "ma:" + ma + ",kdj:" + kdj);
+		LogUtil.log(useId, "技术指标MA:" + ma + ",KDJss:" + kdj);
 		if (ma && kdj) {
 			return true;
 		} else {

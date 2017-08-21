@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.util.StringUtils;
 
@@ -149,6 +150,12 @@ public class TdxResultUtil {
 	}
 	
 	public static List<PriceDO> parseDaylineByWeb(String zqcode) {
+		try {
+			TimeUnit.SECONDS.sleep(3);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String now = LocalDate.now().format(formatter);
 		String before = LocalDate.now().minusDays(365).format(formatter);

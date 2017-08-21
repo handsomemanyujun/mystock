@@ -1,6 +1,7 @@
 package com.yujun.calculate.algorithm.impl;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import com.yujun.calculate.algorithm.Algorithm;
@@ -15,6 +16,11 @@ public class MA implements Algorithm{
 	@Override
 	public boolean getTradeSignal(String code, LocalDate date) {
 		List<PriceDO> data = TdxResultUtil.parseDaylineByWeb(code);
+		data.sort(new Comparator<PriceDO>() {
+			public int compare(PriceDO a, PriceDO b) {
+				return b.getDate().compareTo(a.getDate());
+			}
+		});
 		for(int i = 0; i < data.size(); i++) {
 			if(!data.get(i).getDate().isBefore(date)) {
 				data = data.subList(Math.min(i, data.size()),data.size()-1);
@@ -33,7 +39,7 @@ public class MA implements Algorithm{
         for(int i = 0; i < day.length; i++) {
         	yestdayResult[i] = getAverage(data.subList(data.size() - day[i]-1, data.size()-1));
         }*/
-       // System.out.print(result[0] + "->" +  result[1] +",");
+        LogUtil.log(result[0] + "->" +  result[1] +",");
         if(result[0] >= result[1] 
         		//&& yestdayResult[0] < yestdayResult[1]
         		) {
@@ -53,7 +59,7 @@ public class MA implements Algorithm{
         float sum = 0.0f;
         for(int i = 0;i < price.size();i++){
             sum += price.get(i).getClosingPrice().getCent();
-         //  LogUtil.log(price.get(i).getDateStr() +"==" +price.get(i).getClosingPrice().getCent());
+         //LogUtil.log(price.get(i).getDateStr() +"==" +price.get(i).getClosingPrice().getCent());
         }
      
         return sum / price.size();
@@ -61,7 +67,7 @@ public class MA implements Algorithm{
     
 	public static void main(String[] args) {
 		MA ma  = new MA();
-		boolean flag = ma.getTradeSignal("300085", LocalDate.now());
+		boolean flag = ma.getTradeSignal("600076", LocalDate.now());
 		System.out.println(flag);
 	}
 

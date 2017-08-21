@@ -1,6 +1,7 @@
 package com.yujun.calculate.algorithm.impl;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -19,7 +20,11 @@ public class KDJ implements Algorithm {
 	@Override
 	public boolean getTradeSignal(String code, LocalDate date) {
 		List<PriceDO> data = TdxResultUtil.parseDaylineByWeb(code);
-		data.sort((a,b)->a.getDate().compareTo(b.getDate()));
+		data.sort(new Comparator<PriceDO>() {
+			public int compare(PriceDO a, PriceDO b) {
+				return a.getDate().compareTo(b.getDate());
+			}
+		});
 		
 		for(int i=1 ;i<=data.size();i++) {
 			cal(data.subList(Math.max(0, i-N), i));
