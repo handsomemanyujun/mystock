@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,18 +158,18 @@ public class TdxResultUtil {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		String now = LocalDate.now().format(formatter);
-		String before = LocalDate.now().minusDays(365).format(formatter);
 		
-		String requestUrl = "http://stock.liangyee.com/bus-api/stock/freeStockMarketData/getDailyKBar"
-				+ "?userKey=690F0B3176CB4A14915063A7891E5CB5&startDate="+before + "&endDate="+now;
-		
-		List<PriceDO> list = new ArrayList<PriceDO>();
-		String key = now + "_" + zqcode;
+		String key = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH")) + "_" + zqcode;
 		if(datePricemap.containsKey(key)){
 			return datePricemap.get(key);
 		} 
+		
+		List<PriceDO> list = new ArrayList<PriceDO>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String now = LocalDate.now().format(formatter);
+		String before = LocalDate.now().minusDays(365).format(formatter);
+		String requestUrl = "http://stock.liangyee.com/bus-api/stock/freeStockMarketData/getDailyKBar"
+				+ "?userKey=690F0B3176CB4A14915063A7891E5CB5&startDate="+before + "&endDate="+now;
 		try {
 			if (TdxResultUtil.isSHCode(zqcode)) {
 				requestUrl += "&type=0&symbol="+zqcode;
@@ -182,7 +184,6 @@ public class TdxResultUtil {
 				buf.append(line);
 			}
 			JSONObject json = new JSONObject().parseObject(buf.toString());
-			int i = 0;
 			JSONArray jsarr = json.getJSONArray("result");
 			
 			for(Object obj : jsarr) {
@@ -220,5 +221,6 @@ public class TdxResultUtil {
 		for(PriceDO price: list) {
 			System.out.println(price);
 		}
+		list = parseDaylineByWeb("601012");
 	}
 }

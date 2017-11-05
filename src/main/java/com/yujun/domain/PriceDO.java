@@ -47,8 +47,7 @@ public class PriceDO {
 	}
 	
 	public String toString() {
-		DateFormat format =  new java.text.SimpleDateFormat("yyyyMMdd");
-		return "date : " + format.format(date) + ",openPrice : " + openPrice + ",highestPrice : " + highestPrice
+		return "date : " + date + ",openPrice : " + openPrice + ",highestPrice : " + highestPrice
 				+ ",LowestPrice : " + LowestPrice + ",closingPrice : " + closingPrice;
 	}
 }

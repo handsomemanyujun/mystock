@@ -30,7 +30,7 @@ public class TradeSchedule {
 	Calculata calculata;
 	@Autowired
 	AccountService accountService;
-	boolean isProduct = true;
+	boolean isProduct = false;
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {
