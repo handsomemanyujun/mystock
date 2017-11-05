@@ -3,6 +3,7 @@ package com.yujun.calculate.impl;
 /**
  * 盈利状态下也能进行波段操作
  */
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,6 +165,11 @@ public class TenPercentAndOther implements OrderCalculate {
 			if(list==null) {
 				return 0;
 			}
+			list.sort(new Comparator<PriceDO>() {
+				public int compare(PriceDO a, PriceDO b) {
+					return b.getDate().compareTo(a.getDate());
+				}
+			});
 			int[] price = new int[7];
 			String priceStr ="";
 			for (int i = 0; i < price.length; i++) {

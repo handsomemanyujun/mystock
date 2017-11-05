@@ -14,7 +14,7 @@ public class DateUtil {
 		//return true;
 		Calendar open = Calendar.getInstance();
 		open.set(Calendar.HOUR_OF_DAY, 9);
-		open.set(Calendar.MINUTE,15);
+		open.set(Calendar.MINUTE,31);
 		
 		Calendar close = Calendar.getInstance();
 		close.set(Calendar.HOUR_OF_DAY, 15);
