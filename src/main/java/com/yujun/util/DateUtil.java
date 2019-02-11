@@ -54,22 +54,23 @@ public class DateUtil {
 	private static  List<Date> noTradeDays = new ArrayList<Date>();
 	static {
 		try {
-			noTradeDays.add(dateFormat.parse("2017/01/27"));
-			noTradeDays.add(dateFormat.parse("2017/01/30"));
-			noTradeDays.add(dateFormat.parse("2017/01/31"));
-			noTradeDays.add(dateFormat.parse("2017/02/01"));
-			noTradeDays.add(dateFormat.parse("2017/02/02"));
-			noTradeDays.add(dateFormat.parse("2017/04/03"));
-			noTradeDays.add(dateFormat.parse("2017/04/04"));
-			noTradeDays.add(dateFormat.parse("2017/05/01"));
+			noTradeDays.add(dateFormat.parse("2019/01/01"));
+			noTradeDays.add(dateFormat.parse("2017/02/04"));
+			noTradeDays.add(dateFormat.parse("2017/02/05"));
+			noTradeDays.add(dateFormat.parse("2017/02/06"));
+			noTradeDays.add(dateFormat.parse("2017/02/07"));
+			noTradeDays.add(dateFormat.parse("2017/02/08"));
+			noTradeDays.add(dateFormat.parse("2017/04/05"));
 			noTradeDays.add(dateFormat.parse("2017/05/29"));
 			noTradeDays.add(dateFormat.parse("2017/05/30"));
+			noTradeDays.add(dateFormat.parse("2017/05/01"));
+			noTradeDays.add(dateFormat.parse("2017/06/07"));
+			noTradeDays.add(dateFormat.parse("2017/09/13"));
+			noTradeDays.add(dateFormat.parse("2017/10/01"));
 			noTradeDays.add(dateFormat.parse("2017/10/02"));
 			noTradeDays.add(dateFormat.parse("2017/10/03"));
 			noTradeDays.add(dateFormat.parse("2017/10/04"));
-			noTradeDays.add(dateFormat.parse("2017/10/05"));
-			noTradeDays.add(dateFormat.parse("2017/10/06"));
-			
+			noTradeDays.add(dateFormat.parse("2017/10/07"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

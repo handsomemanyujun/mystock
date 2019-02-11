@@ -14,7 +14,7 @@ import com.yujun.util.Money;
 public class HoldingStockCal {
 	
 	public long[][] calStockRegion(String userId, StockDO initStock) {
-		long[][]  priceRegion = new long[70][2];
+		long[][]  priceRegion = new long[90][2];
 		
 		StringBuffer buffer = new StringBuffer();
 		int sum = (int)initStock.getAmount();

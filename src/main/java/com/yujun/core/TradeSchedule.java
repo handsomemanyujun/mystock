@@ -30,7 +30,7 @@ public class TradeSchedule {
 	Calculata calculata;
 	@Autowired
 	AccountService accountService;
-	boolean isProduct = false;
+	boolean isProduct = true;
 	@Scheduled(cron="0 0/1 *  * * ? ")
 	public void schedul() {
 		try {
@@ -132,6 +132,8 @@ public class TradeSchedule {
 							stockClient.cancleOrder(setting.getUserId(),
 									orderDO);
 						}
+					} else if(target.getAvaPrice().greaterThan(online.getyPrice().multiply(1.1f))) {
+						LogUtil.log(setting.getUserId(),"卖出目标价，高于今日涨停价，放弃！");
 					} else {
 						orderDO = new OrderDO();
 						orderDO.setAmount(Math.abs(holdings.get(0)
