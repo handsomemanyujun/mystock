@@ -2,6 +2,8 @@ package com.yujun.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -29,7 +31,7 @@ import com.yujun.domain.Setting;
 public class SettingService {
 	Logger logger=LoggerFactory.getLogger(SettingService.class);
 	private Map<String, Map<String,Setting>> settings = new HashMap<String, Map<String,Setting>>();
-	URL db = this.getClass().getResource("/stock_setting.db");
+	File db = new File("C:/Users/Administrator/Desktop/newstock/mystock/stock_setting.db");
 	public Map<String, Map<String,Setting>> getAllUserSetting() throws Exception{
 		if(settings == null) {
 			initConfig();	
@@ -54,7 +56,7 @@ public class SettingService {
 		try {
 			StringBuffer buf = new StringBuffer();
 			BufferedReader br;
-			br = new BufferedReader(new InputStreamReader(db.openStream()));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(db)));
 
 			String line = "";
 			while ((line = br.readLine()) != null) {
@@ -101,7 +103,7 @@ public class SettingService {
 					list.add(it);
 				}
 			}
-			BufferedWriter br = new BufferedWriter(new FileWriter(db.getFile(),false));
+			BufferedWriter br = new BufferedWriter(new FileWriter(db,false));
 			br.write(JSONObject.toJSONString(list));
 			br.flush(); //刷新缓冲区的数据到文件
 			br.close();

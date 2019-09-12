@@ -172,7 +172,7 @@ public class TenPercentAndOther implements OrderCalculate {
 			});
 			int[] price = new int[7];
 			String priceStr ="";
-			for (int i = 0; i < price.length; i++) {
+			for (int i = 1; i < price.length; i++) {
 				PriceDO beYestday = list.get(i + 1);
 				PriceDO yestday = list.get(i);
 				price[i] = (int) (Math.max(

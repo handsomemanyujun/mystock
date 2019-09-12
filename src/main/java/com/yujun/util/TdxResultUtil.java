@@ -165,17 +165,14 @@ public class TdxResultUtil {
 		} 
 		
 		List<PriceDO> list = new ArrayList<PriceDO>();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		String now = LocalDate.now().format(formatter);
 		String before = LocalDate.now().minusDays(365).format(formatter);
-		String requestUrl = "http://stock.liangyee.com/bus-api/stock/freeStockMarketData/getDailyKBar"
-				+ "?userKey=690F0B3176CB4A14915063A7891E5CB5&startDate="+before + "&endDate="+now;
+		String requestUrl = String.format(
+				"http://q.stock.sohu.com/hisHq?code=cn_+"+zqcode+"&start=%s&end=%s&stat=1&order=D&period=d", before, now);
+
 		try {
-			if (TdxResultUtil.isSHCode(zqcode)) {
-				requestUrl += "&type=0&symbol="+zqcode;
-			} else {
-				requestUrl += "&type=1&symbol="+zqcode;
-			}
+			
 			BufferedReader reader =  HttpClient.getRead(requestUrl);
 			DateFormat format =  new java.text.SimpleDateFormat("yyyy-MM-dd");
 			StringBuffer buf = new StringBuffer();
@@ -183,17 +180,18 @@ public class TdxResultUtil {
 			while (!StringUtils.isEmpty(line=reader.readLine())) {	
 				buf.append(line);
 			}
-			JSONObject json = new JSONObject().parseObject(buf.toString());
-			JSONArray jsarr = json.getJSONArray("result");
+			JSONArray jsarr = new JSONArray().parseArray(buf.toString());
 			
-			for(Object obj : jsarr) {
-				String[] item =((String)obj).split(",");
+			//JSONArray jsarr = json.getJSONArray("result");
+			
+			for(Object obj : jsarr.getJSONObject(0).getJSONArray("hq")) {
+				JSONArray item =((JSONArray)obj);
 				PriceDO offlinePriceDO= new PriceDO();
-				offlinePriceDO.setDate(LocalDate.parse(item[0]));
-				offlinePriceDO.setOpenPrice(new Money(item[1]));
-				offlinePriceDO.setHighestPrice(new Money(item[3]));
-				offlinePriceDO.setLowestPrice(new Money(item[4]));
-				offlinePriceDO.setClosingPrice(new Money(item[2]));
+				offlinePriceDO.setDate(LocalDate.parse(item.get(0).toString()));
+				offlinePriceDO.setOpenPrice(new Money(item.get(1).toString()));
+				offlinePriceDO.setHighestPrice(new Money(item.get(6).toString()));
+				offlinePriceDO.setLowestPrice(new Money(item.get(5).toString()));
+				offlinePriceDO.setClosingPrice(new Money(item.get(2).toString()));
 				list.add(offlinePriceDO);
 			}
 		/*	while (!StringUtils.isEmpty(line=reader.readLine())) {	

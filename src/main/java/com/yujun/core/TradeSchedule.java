@@ -90,10 +90,10 @@ public class TradeSchedule {
 				Map<String, StockDO> lh = calculata.getTradeOrder(setting.getType(), setting.buildStockDO(),
 						holdings.get(0), online, new Float(setting.getRate()).intValue());
 				
-				/*if(online.getNowPrice().greaterThan(holdings.get(0).getAvaPrice())){
+				if(online.getNowPrice().greaterThan(holdings.get(0).getAvaPrice())){
 					LogUtil.log(setting.getUserId(),"成本价已小于当前价 ，不进操作");
 					continue;
-				}*/
+				}
 				
 				Date date = DateUtil.addMinute(stockClient.latestOrderTime(setting.getUserId(), setting.getCode()),12);
 				if(date!=null && new Date().before(date)){
@@ -158,11 +158,11 @@ public class TradeSchedule {
 	private boolean canOrderBuy(String useId, String code) {
 		boolean ma = new MA().getTradeSignal(code, LocalDate.now());
 		boolean kdj = new KDJ().getTradeSignal(code, LocalDate.now());
-		LogUtil.log(useId, "技术指标MA:" + ma + ",KDJss:" + kdj);
-		if (ma && kdj) {
+		LogUtil.log(useId, "技术指标MAS:" + ma + ",KDJss:" + kdj);
+		//if (ma && kdj) {
 			return true;
-		} else {
-			return false;
-		}
+		//} else S{
+			//Sreturn false;
+		//S}
 	}
 }
