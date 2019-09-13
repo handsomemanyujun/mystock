@@ -188,7 +188,7 @@ public class TdxResultUtil {
 		String now = LocalDate.now().format(formatter);
 		String before = LocalDate.now().minusDays(365).format(formatter);
 		String requestUrl = String.format(
-				"http://q.stock.sohu.com/hisHq?code=cn_+"+zqcode+"&start=%s&end=%s&stat=1&order=D&period=d", before, now);
+				"http://q.stock.sohu.com/hisHq?code=cn_"+zqcode+"&start=%s&end=%s&stat=1&order=D&period=d", before, now);
 
 		try {
 			
@@ -234,7 +234,7 @@ public class TdxResultUtil {
 	}
 	
 	public static void main(String[] args) {
-		OnlinePriceDO  price = queryOnlinePrice("000413");
+		List  price = parseDaylineByWeb("000413");
 		System.out.println(price);
 	}
 }

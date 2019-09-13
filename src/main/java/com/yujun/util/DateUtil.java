@@ -54,7 +54,7 @@ public class DateUtil {
 	private static  List<Date> noTradeDays = new ArrayList<Date>();
 	static {
 		try {
-			noTradeDays.add(dateFormat.parse("2019/01/01"));
+			noTradeDays.add(dateFormat.parse("2019/09/13"));
 			noTradeDays.add(dateFormat.parse("2017/02/04"));
 			noTradeDays.add(dateFormat.parse("2017/02/05"));
 			noTradeDays.add(dateFormat.parse("2017/02/06"));
@@ -66,11 +66,13 @@ public class DateUtil {
 			noTradeDays.add(dateFormat.parse("2017/05/01"));
 			noTradeDays.add(dateFormat.parse("2017/06/07"));
 			noTradeDays.add(dateFormat.parse("2017/09/13"));
-			noTradeDays.add(dateFormat.parse("2017/10/01"));
-			noTradeDays.add(dateFormat.parse("2017/10/02"));
-			noTradeDays.add(dateFormat.parse("2017/10/03"));
-			noTradeDays.add(dateFormat.parse("2017/10/04"));
-			noTradeDays.add(dateFormat.parse("2017/10/07"));
+			noTradeDays.add(dateFormat.parse("2019/10/01"));
+			noTradeDays.add(dateFormat.parse("2019/10/02"));
+			noTradeDays.add(dateFormat.parse("2019/10/03"));
+			noTradeDays.add(dateFormat.parse("2019/10/04"));
+			noTradeDays.add(dateFormat.parse("2019/10/05"));
+			noTradeDays.add(dateFormat.parse("2019/10/06"));
+			noTradeDays.add(dateFormat.parse("2019/10/07"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
