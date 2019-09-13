@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.PriceDO;
 
 public class TdxResultUtil {
@@ -119,6 +120,24 @@ public class TdxResultUtil {
 		return list;
 	}
 	
+	public static OnlinePriceDO queryOnlinePrice(String zqdm) {
+		String requestUrl = String.format(
+				"http://hq.sinajs.cn/list=%s%s", zqdm.startsWith("6")? "sh":"sz",zqdm);
+
+		try {			
+			BufferedReader reader =  HttpClient.getRead(requestUrl);
+			StringBuffer buf = new StringBuffer();
+			String line =reader.readLine();
+			String[] parts = line.split(",");
+			OnlinePriceDO priceDO= new OnlinePriceDO();
+			priceDO.setNowPrice(new Money(parts[3]));
+			priceDO.setNsPrice(new Money(parts[1]));
+			priceDO.setyPrice(new Money(parts[2]));
+			return priceDO;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	public static List<PriceDO> parseDayline(String zqcode) {
 		FileInputStream fis = null;
 		List<PriceDO> list = new ArrayList<PriceDO>();
@@ -215,10 +234,7 @@ public class TdxResultUtil {
 	}
 	
 	public static void main(String[] args) {
-		List<PriceDO>  list = parseDaylineByWeb("601012");
-		for(PriceDO price: list) {
-			System.out.println(price);
-		}
-		list = parseDaylineByWeb("601012");
+		OnlinePriceDO  price = queryOnlinePrice("000413");
+		System.out.println(price);
 	}
 }

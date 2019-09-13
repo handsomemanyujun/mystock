@@ -18,6 +18,7 @@ public class HttpClient {
                 .setSocketTimeout(5000).build();    
         httpGet.setConfig(requestConfig);
         httpGet.addHeader("User-Agent", url);
+        httpGet.addHeader("Accept-Language", "zh-CN,zh;q=0.8");
         CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 
         System.out.println("GET Response Status:: "

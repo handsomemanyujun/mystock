@@ -18,6 +18,7 @@ import com.yujun.domain.FundPoolDO;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.OrderDO;
 import com.yujun.domain.StockDO;
+import com.yujun.util.TdxResultUtil;
 
 @Component
 public class tdxClientProxy implements StockClient{
@@ -55,7 +56,8 @@ public class tdxClientProxy implements StockClient{
 	}
 	@Override
 	public OnlinePriceDO queryMarket(String userId, String zqdm) {
-		return tdxClinets.get(userId)!=null ? tdxClinets.get(userId).queryMarket(userId,zqdm):null;
+		return TdxResultUtil.queryOnlinePrice(zqdm);
+		//return tdxClinets.get(userId)!=null ? tdxClinets.get(userId).queryMarket(userId,zqdm):null;
 	}
 	@Override
 	public void cancleOrder(String userId, OrderDO orderDO) {
