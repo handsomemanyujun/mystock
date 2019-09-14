@@ -67,7 +67,7 @@ public class MA implements Algorithm{
     
 	public static void main(String[] args) {
 		MA ma  = new MA();
-		boolean flag = ma.getTradeSignal("600076", LocalDate.now());
+		boolean flag = ma.getTradeSignal("300327", LocalDate.now());
 		System.out.println(flag);
 	}
 

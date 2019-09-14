@@ -13,17 +13,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.yujun.domain.OnlinePriceDO;
 import com.yujun.domain.PriceDO;
 
 public class TdxResultUtil {
-	static Map<String,List<PriceDO>> datePricemap = new HashMap<String,List<PriceDO>>();
+	static Cache<String, List<PriceDO>>  priceCache = CacheBuilder.newBuilder().expireAfterWrite(8, TimeUnit.HOURS).build();
+    
+	static Cache<String, OnlinePriceDO>  onlinecache = CacheBuilder.newBuilder().expireAfterWrite(50, TimeUnit.SECONDS).build();
+     
 	public static String[][] parseStr(String result){
 		if(result !=null) {
 			String[] lines	 = result.split("\n");
@@ -121,22 +128,27 @@ public class TdxResultUtil {
 	}
 	
 	public static OnlinePriceDO queryOnlinePrice(String zqdm) {
-		String requestUrl = String.format(
-				"http://hq.sinajs.cn/list=%s%s", zqdm.startsWith("6")? "sh":"sz",zqdm);
-
-		try {			
-			BufferedReader reader =  HttpClient.getRead(requestUrl);
-			StringBuffer buf = new StringBuffer();
-			String line =reader.readLine();
-			String[] parts = line.split(",");
-			OnlinePriceDO priceDO= new OnlinePriceDO();
-			priceDO.setNowPrice(new Money(parts[3]));
-			priceDO.setNsPrice(new Money(parts[1]));
-			priceDO.setyPrice(new Money(parts[2]));
-			return priceDO;
-		} catch (Exception e) {
+		try {
+			return onlinecache.get(zqdm, ()->{
+				String requestUrl = String.format(
+						"http://hq.sinajs.cn/list=%s%s", zqdm.startsWith("6")? "sh":"sz",zqdm);
+				try {			
+					BufferedReader reader =  HttpClient.getRead(requestUrl);
+					String line =reader.readLine();
+					String[] parts = line.split(",");
+					OnlinePriceDO priceDO= new OnlinePriceDO();
+					priceDO.setNowPrice(new Money(parts[3]));
+								priceDO.setNsPrice(new Money(parts[1]));
+					priceDO.setyPrice(new Money(parts[2]));
+					return priceDO;
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			});
+		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}
+		
 	}
 	public static List<PriceDO> parseDayline(String zqcode) {
 		FileInputStream fis = null;
@@ -152,16 +164,14 @@ public class TdxResultUtil {
 			File file = new File(path);
 			fis = new FileInputStream(file);
 			byte[] buf = new byte[32];
-			StringBuffer sb = new StringBuffer();
-			DateFormat format =  new java.text.SimpleDateFormat("yyyyMMdd");
 			while ((fis.read(buf)) != -1) {
-				PriceDO offlinePriceDO= new PriceDO();
-				offlinePriceDO.setDate(LocalDate.parse(TdxResultUtil.byteArrayToInt(buf,0,4)+""));
-				offlinePriceDO.setOpenPrice(new Money((long)byteArrayToInt(buf,4,8)));
-				offlinePriceDO.setHighestPrice(new Money((long)byteArrayToInt(buf,8,12)));
-				offlinePriceDO.setLowestPrice(new Money((long)byteArrayToInt(buf,12,16)));
-				offlinePriceDO.setClosingPrice(new Money((long)byteArrayToInt(buf,16,20)));
-				list.add(offlinePriceDO);
+				PriceDO priceDO= new PriceDO();
+				priceDO.setDate(LocalDate.parse(TdxResultUtil.byteArrayToInt(buf,0,4)+""));
+				priceDO.setOpenPrice(new Money((long)byteArrayToInt(buf,4,8)));
+				priceDO.setHighestPrice(new Money((long)byteArrayToInt(buf,8,12)));
+				priceDO.setLowestPrice(new Money((long)byteArrayToInt(buf,12,16)));
+				priceDO.setClosingPrice(new Money((long)byteArrayToInt(buf,16,20)));
+				list.add(priceDO);
 				buf = new byte[32];// 重新生成，避免和上次读取的数据重复
 			}
 		} catch (Exception e) {
@@ -172,69 +182,46 @@ public class TdxResultUtil {
 	
 	public static List<PriceDO> parseDaylineByWeb(String zqcode) {
 		try {
-			TimeUnit.SECONDS.sleep(3);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		String key = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH")) + "_" + zqcode;
-		if(datePricemap.containsKey(key)){
-			return datePricemap.get(key);
-		} 
-		
-		List<PriceDO> list = new ArrayList<PriceDO>();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		String now = LocalDate.now().format(formatter);
-		String before = LocalDate.now().minusDays(365).format(formatter);
-		String requestUrl = String.format(
-				"http://q.stock.sohu.com/hisHq?code=cn_"+zqcode+"&start=%s&end=%s&stat=1&order=D&period=d", before, now);
-
-		try {
+			return priceCache.get(zqcode, ()->{
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+				String now = LocalDate.now().format(formatter);
+				String before = LocalDate.now().minusDays(365).format(formatter);
+				String requestUrl = String.format(
+						"http://q.stock.sohu.com/hisHq?code=cn_"+zqcode+"&start=%s&end=%s&stat=1&order=D&period=d", before, now);
+				try {
+					List<PriceDO> list = new ArrayList<PriceDO>();
+					BufferedReader reader =  HttpClient.getRead(requestUrl);
+					StringBuffer buf = new StringBuffer();
+					String line ="";
+					while (!StringUtils.isEmpty(line=reader.readLine())) {	
+						buf.append(line);
+					}
+					JSONArray jsarr = JSONArray.parseArray(buf.toString());
+					for(Object obj : jsarr.getJSONObject(0).getJSONArray("hq")) {
+						JSONArray item =((JSONArray)obj);
+						PriceDO priceDO= new PriceDO();
+						priceDO.setDate(LocalDate.parse(item.get(0).toString()));
+						priceDO.setOpenPrice(new Money(item.get(1).toString()));
+						priceDO.setHighestPrice(new Money(item.get(6).toString()));
+						priceDO.setLowestPrice(new Money(item.get(5).toString()));
+						priceDO.setClosingPrice(new Money(item.get(2).toString()));
+						list.add(priceDO);
+					}
+					return list;
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 			
-			BufferedReader reader =  HttpClient.getRead(requestUrl);
-			DateFormat format =  new java.text.SimpleDateFormat("yyyy-MM-dd");
-			StringBuffer buf = new StringBuffer();
-			String line ="";
-			while (!StringUtils.isEmpty(line=reader.readLine())) {	
-				buf.append(line);
-			}
-			JSONArray jsarr = new JSONArray().parseArray(buf.toString());
-			
-			//JSONArray jsarr = json.getJSONArray("result");
-			
-			for(Object obj : jsarr.getJSONObject(0).getJSONArray("hq")) {
-				JSONArray item =((JSONArray)obj);
-				PriceDO offlinePriceDO= new PriceDO();
-				offlinePriceDO.setDate(LocalDate.parse(item.get(0).toString()));
-				offlinePriceDO.setOpenPrice(new Money(item.get(1).toString()));
-				offlinePriceDO.setHighestPrice(new Money(item.get(6).toString()));
-				offlinePriceDO.setLowestPrice(new Money(item.get(5).toString()));
-				offlinePriceDO.setClosingPrice(new Money(item.get(2).toString()));
-				list.add(offlinePriceDO);
-			}
-		/*	while (!StringUtils.isEmpty(line=reader.readLine())) {	
-				
-				String[] item = line.split(",");
-				if(new Money(item[5]).getCent()==0) continue;
-				PriceDO offlinePriceDO= new PriceDO();
-				offlinePriceDO.setDate(format.parse(item[0]));
-				offlinePriceDO.setOpenPrice(new Money(item[1]));
-				offlinePriceDO.setHighestPrice(new Money(item[2]));
-				offlinePriceDO.setLowestPrice(new Money(item[3]));
-				offlinePriceDO.setClosingPrice(new Money(item[4]));
-				list.add(offlinePriceDO);
-			}*/
-			
-		} catch (Exception e) {
+			});
+		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}
-		datePricemap.put(key, list);
-		return list;
+		
 	}
 	
 	public static void main(String[] args) {
-		List  price = parseDaylineByWeb("000413");
+		OnlinePriceDO  price = queryOnlinePrice("000413");
 		System.out.println(price);
+		queryOnlinePrice("000413");
 	}
 }

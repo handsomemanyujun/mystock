@@ -66,7 +66,7 @@ public class MACD implements Algorithm {
 	
 	public static void main(String[] args) {
 		MACD macd  = new MACD();
-		boolean flag = macd.getTradeSignal("300085", LocalDate.now());
+		boolean flag = macd.getTradeSignal("000413", LocalDate.now());
 		System.out.println(flag);
 	}
 

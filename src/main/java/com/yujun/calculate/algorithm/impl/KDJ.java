@@ -120,7 +120,7 @@ public class KDJ implements Algorithm {
 	
 	public  static void main(String[] s) {
 		KDJ kdj  = new KDJ();
-		boolean flag = kdj.getTradeSignal("300085", null);
+		boolean flag = kdj.getTradeSignal("300246", null);
 		System.out.println(flag);
 	}
 	
